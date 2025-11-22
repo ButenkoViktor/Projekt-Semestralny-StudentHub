@@ -9,9 +9,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "frontend", "frontend", "{1D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{3D0129B0-4212-4748-9AE1-B43DBC11A64E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentHub.Api", "backend\StudentHub.Api\StudentHub.Api.csproj", "{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0F17A9D-CBA1-4380-8F6A-B7268314505D}
