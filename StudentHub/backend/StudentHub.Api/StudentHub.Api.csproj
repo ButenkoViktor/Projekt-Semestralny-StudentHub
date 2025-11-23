@@ -16,4 +16,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StudentHub.Application\StudentHub.Application.csproj" />
+    <ProjectReference Include="..\StudentHub.Core\StudentHub.Core.csproj" />
+    <ProjectReference Include="..\StudentHub.Infrastructure\StudentHub.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

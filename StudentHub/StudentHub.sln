@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -10,6 +10,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{3D0129B0-4212-4748-9AE1-B43DBC11A64E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentHub.Api", "backend\StudentHub.Api\StudentHub.Api.csproj", "{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentHub.Core", "backend\StudentHub.Core\StudentHub.Core.csproj", "{F067C002-B5EA-4BAA-B66A-19F9C8C1D105}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentHub.Infrastructure", "backend\StudentHub.Infrastructure\StudentHub.Infrastructure.csproj", "{4180057E-430E-413B-9E99-BDFE8D8FA7E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentHub.Application", "backend\StudentHub.Application\StudentHub.Application.csproj", "{19AB034A-8B2C-4F9C-BEA3-1CA7783B3F1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,12 +27,27 @@ Global
 		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F067C002-B5EA-4BAA-B66A-19F9C8C1D105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F067C002-B5EA-4BAA-B66A-19F9C8C1D105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F067C002-B5EA-4BAA-B66A-19F9C8C1D105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F067C002-B5EA-4BAA-B66A-19F9C8C1D105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4180057E-430E-413B-9E99-BDFE8D8FA7E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4180057E-430E-413B-9E99-BDFE8D8FA7E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4180057E-430E-413B-9E99-BDFE8D8FA7E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4180057E-430E-413B-9E99-BDFE8D8FA7E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19AB034A-8B2C-4F9C-BEA3-1CA7783B3F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19AB034A-8B2C-4F9C-BEA3-1CA7783B3F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19AB034A-8B2C-4F9C-BEA3-1CA7783B3F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19AB034A-8B2C-4F9C-BEA3-1CA7783B3F1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6B01D8EA-EAB8-4947-B9E6-B6CF207A03CE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F067C002-B5EA-4BAA-B66A-19F9C8C1D105} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4180057E-430E-413B-9E99-BDFE8D8FA7E7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{19AB034A-8B2C-4F9C-BEA3-1CA7783B3F1D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0F17A9D-CBA1-4380-8F6A-B7268314505D}
