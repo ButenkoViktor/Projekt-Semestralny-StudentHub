@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StudentHub.Core.Entities.Chat
+﻿public class ChatRoom
 {
-    internal class ChatRoom
-    {
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = default!;
+
+    public ICollection<ChatParticipant>? Participants { get; set; }
+    public ICollection<ChatMessage>? Messages { get; set; }
 }
