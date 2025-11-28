@@ -1,5 +1,4 @@
 ﻿using StudentHub.Core.Entities.Users;
-
 public class ChatParticipant
 {
     public int Id { get; set; }

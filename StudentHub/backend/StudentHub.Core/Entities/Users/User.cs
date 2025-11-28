@@ -48,6 +48,7 @@ namespace StudentHub.Core.Entities.Users
         /// Gets or sets the group associated with this instance.
         /// </summary>
         public Group? Group { get; set; }
-
+        public ICollection<Chat.ChatMessage>? Messages { get; set; }
+        public ICollection<Chat.ChatRoomParticipant>? ChatParticipants { get; set; }
     }
 }
