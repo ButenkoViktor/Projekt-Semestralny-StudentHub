@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StudentHub.Core.Entities.Groups;
+using StudentHub.Core.Entities.Chat;
 
 namespace StudentHub.Core.Entities.Users
 {
@@ -49,6 +50,8 @@ namespace StudentHub.Core.Entities.Users
         /// </summary>
         public Group? Group { get; set; }
         public ICollection<Chat.ChatMessage>? Messages { get; set; }
-        public ICollection<Chat.ChatRoomParticipant>? ChatParticipants { get; set; }
+        public ICollection<Chat.ChatParticipant>? ChatParticipants { get; set; }
     }
 }
+
+

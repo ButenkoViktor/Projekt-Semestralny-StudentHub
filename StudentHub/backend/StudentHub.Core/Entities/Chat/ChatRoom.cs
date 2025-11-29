@@ -1,8 +1,13 @@
-﻿public class ChatRoom
+﻿using System.Collections.Generic;
+namespace StudentHub.Core.Entities.Chat
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = default!;
+    public class ChatRoom
 
-    public ICollection<ChatParticipant>? Participants { get; set; }
-    public ICollection<ChatMessage>? Messages { get; set; }
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = default!;
+
+        public ICollection<ChatParticipant>? Participants { get; set; }
+        public ICollection<ChatMessage>? Messages { get; set; }
+    }
 }
