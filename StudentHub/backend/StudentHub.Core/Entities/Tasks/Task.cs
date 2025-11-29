@@ -8,7 +8,7 @@ using StudentHub.Core.Entities.Users;
 
 namespace StudentHub.Core.Entities.Tasks
 {
-    public class Task
+    public class TaskItem
     {
         /// <summary>
         /// Primary key of the task.

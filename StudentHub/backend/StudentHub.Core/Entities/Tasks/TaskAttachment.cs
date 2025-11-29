@@ -30,6 +30,6 @@ namespace StudentHub.Core.Entities.Tasks
         /// <summary>
         /// Gets or sets the asynchronous operation associated with this instance.
         /// </summary>
-        public Task Task { get; set; } = default!;
+        public TaskItem Task { get; set; } = default!;
     }
 }

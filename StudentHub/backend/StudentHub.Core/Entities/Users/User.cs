@@ -49,7 +49,21 @@ namespace StudentHub.Core.Entities.Users
         /// Gets or sets the group associated with this instance.
         /// </summary>
         public Group? Group { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of chat messages associated with the conversation.
+        /// </summary>
+        /// <remarks>The collection may be null if no messages have been loaded or assigned. Modifying the
+        /// collection does not automatically persist changes; ensure that updates are saved as appropriate for the
+        /// application's data model.</remarks>
         public ICollection<Chat.ChatMessage>? Messages { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of participants in the chat.
+        /// </summary>
+        /// <remarks>The collection may be null if no participants have been added. Modifying the
+        /// collection does not automatically update the chat state; ensure changes are synchronized as needed in
+        /// multi-threaded scenarios.</remarks>
         public ICollection<Chat.ChatParticipant>? ChatParticipants { get; set; }
     }
 }
