@@ -44,7 +44,7 @@ namespace StudentHub.Infrastructure.Data
         public DbSet<Notification> Notifications { get; set; }
 
         // Tasks
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<TaskAttachment> TaskAttachments { get; set; }
         public DbSet<TaskSubmission> TaskSubmissions { get; set; }
         public DbSet<TaskSubmissionFile> TaskSubmissionFiles { get; set; }
