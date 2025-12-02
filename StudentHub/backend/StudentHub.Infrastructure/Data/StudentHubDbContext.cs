@@ -11,11 +11,13 @@ using StudentHub.Core.Entities.Schedule;
 using StudentHub.Core.Entities.Tasks;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using StudentHub.Infrastructure.Identity;
 
 namespace StudentHub.Infrastructure.Data
 {
     // Data base context for StudentHub application
-    public class StudentHubDbContext : DbContext
+    public class StudentHubDbContext : IdentityDbContext<ApplicationUser>
     {
         public StudentHubDbContext(DbContextOptions<StudentHubDbContext> options)
             : base(options)
