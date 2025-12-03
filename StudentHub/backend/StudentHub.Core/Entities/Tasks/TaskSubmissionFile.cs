@@ -28,6 +28,12 @@ namespace StudentHub.Core.Entities.Tasks
         /// </summary>
         public int SubmissionId { get; set; }
 
+        public string FileUrl { get; set; } = default!;
+
+        public int TaskItemId { get; set; }
+
+        public string UserId { get; set; } = default!;
+
         /// <summary>
         /// Gets or sets the task submission associated with this instance.
         /// </summary>

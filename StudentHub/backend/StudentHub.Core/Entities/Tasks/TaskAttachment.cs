@@ -31,5 +31,15 @@ namespace StudentHub.Core.Entities.Tasks
         /// Gets or sets the asynchronous operation associated with this instance.
         /// </summary>
         public TaskItem Task { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the task item.
+        /// </summary>
+        public int TaskItemId { get; set; }
+        /// <summary>
+        /// Gets or sets the URL of the file.
+        /// </summary>
+        public string FileUrl { get; set; } = default!;
+
     }
 }

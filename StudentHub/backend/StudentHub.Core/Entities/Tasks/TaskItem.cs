@@ -36,6 +36,21 @@ namespace StudentHub.Core.Entities.Tasks
         public bool IsPublished { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets the unique identifier for the course.
+        /// </summary>
+        public int CourseId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the deadline for completing the task.
+        /// </summary>
+        public DateTime Deadline { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of the group associated with the entity.
+        /// </summary>
+        public int? GroupId { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of attachments associated with the task.
         /// </summary>
         /// <remarks>The collection may be null if no attachments have been added. Modifying the

@@ -42,6 +42,16 @@ namespace StudentHub.Core.Entities.Tasks
         public DateTime SubmittedAt { get; set; }
 
         /// <summary>
+        /// Gets or sets the text of the answer.
+        /// </summary>
+        public string? AnswerText { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the task item.
+        /// </summary>
+        public int TaskItemId { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of files associated with the task submission.
         /// </summary>
         /// <remarks>The collection may be null if no files have been provided. Modifying the collection
