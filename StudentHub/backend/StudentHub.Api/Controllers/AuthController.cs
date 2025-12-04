@@ -16,20 +16,34 @@ namespace StudentHub.Api.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _config;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _config = config;
         }
 
+        // REGISTER NEW USER
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existing = await _userManager.FindByEmailAsync(dto.Email);
+            if (existing != null)
+                return BadRequest("User with this email already exists.");
+
+            if (!await _roleManager.RoleExistsAsync("Student"))
+                await _roleManager.CreateAsync(new IdentityRole("Student"));
+
             var user = new ApplicationUser
             {
                 Email = dto.Email,
@@ -45,9 +59,10 @@ namespace StudentHub.Api.Controllers
 
             await _userManager.AddToRoleAsync(user, "Student");
 
-            return Ok("User created!");
+            return Ok(new { message = "User registered successfully" });
         }
 
+        // LOGIN USER
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
@@ -59,13 +74,17 @@ namespace StudentHub.Api.Controllers
             if (!result.Succeeded)
                 return Unauthorized("Invalid email or password");
 
-            var token = GenerateToken(user);
+            var token = await GenerateToken(user);
+
             return Ok(new { token });
         }
 
-        private string GenerateToken(ApplicationUser user)
+        // GENERATE JWT TOKEN
+        private async Task<string> GenerateToken(ApplicationUser user)
         {
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
+
+            var roles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
             {
@@ -75,11 +94,15 @@ namespace StudentHub.Api.Controllers
                 new Claim("LastName", user.LastName)
             };
 
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
             var creds = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
+                expires: DateTime.UtcNow.AddDays(7),
                 claims: claims,
                 signingCredentials: creds
             );

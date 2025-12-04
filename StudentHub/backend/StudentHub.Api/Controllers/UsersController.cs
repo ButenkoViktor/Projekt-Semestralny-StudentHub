@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StudentHub.Api.Models.User;
 using StudentHub.Infrastructure.Identity;
 using System.Security.Claims;
 
@@ -8,30 +9,60 @@ namespace StudentHub.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    [Authorize]
+    public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UsersController(UserManager<ApplicationUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
 
+        // GET MY INFO
         [HttpGet("me")]
-        public async Task<IActionResult> Me()
+        public async Task<IActionResult> GetMyInfo()
         {
-            var userId = User.FindFirst("sub")?.Value
-                         ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized();
 
             var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
 
-            return Ok(new
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var dto = new UserInfoDto
             {
-                user.Id,
-                user.Email,
-                user.FirstName,
-                user.LastName
-            });
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = roles.ToList()
+            };
+
+            return Ok(dto);
+        }
+
+        // UPDATE 
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateUser(UpdateUserDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized();
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok("User updated successfully");
         }
     }
 }
