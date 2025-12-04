@@ -7,7 +7,6 @@ using System.Security.Claims;
 namespace StudentHub.Api.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
