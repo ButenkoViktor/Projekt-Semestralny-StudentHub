@@ -1,6 +1,5 @@
 ﻿using System;
-using StudentHub.Core.Entities.Users;
-
+using StudentHub.Core.Entities.Identity;
 namespace StudentHub.Core.Entities.Notifications
 {
     public class Notification
@@ -14,9 +13,9 @@ namespace StudentHub.Core.Entities.Notifications
         /// </summary>
         public string UserId { get; set; } = default!;
         /// <summary>
-        /// Gets or sets the user associated with the current context.
+        /// Gets or sets the user associated with the current application context.
         /// </summary>
-        public User User { get; set; } = default!;
+        public ApplicationUser User { get; set; } = default!;
         /// <summary>
         /// Gets or sets the message text associated with this instance.
         /// </summary>

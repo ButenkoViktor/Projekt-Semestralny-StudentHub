@@ -1,10 +1,9 @@
-﻿using StudentHub.Core.Entities.Users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentHub.Core.Entities.Users;
+using StudentHub.Core.Entities.Identity;
 
 namespace StudentHub.Core.Entities.Announcements
 {
@@ -36,9 +35,9 @@ namespace StudentHub.Core.Entities.Announcements
         public string AuthorId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the user who authored the content.
+        /// Gets or sets the author of the application content.
         /// </summary>
-        public User Author { get; set; } = default!;
+        public ApplicationUser Author { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the date and time when the object was created, in UTC.

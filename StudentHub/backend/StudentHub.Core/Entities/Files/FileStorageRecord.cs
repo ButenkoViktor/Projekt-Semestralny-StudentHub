@@ -1,4 +1,6 @@
 ﻿using System;
+using StudentHub.Core.Entities.Identity;
+
 namespace StudentHub.Core.Entities.Files
 {
     public class FileStorageRecord
@@ -18,7 +20,13 @@ namespace StudentHub.Core.Entities.Files
         /// <summary>
         /// Gets or sets the name or identifier of the user who uploaded the item.
         /// </summary>
-        public string? UploadedBy { get; set; }
+        public string? UploadedById { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user who uploaded the associated content.
+        /// </summary>
+        public ApplicationUser? UploadedBy { get; set; }
+
         /// <summary>
         /// Gets or sets the date and time, in UTC, when the item was uploaded.
         /// </summary>

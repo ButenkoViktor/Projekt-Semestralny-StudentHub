@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using StudentHub.Api.Models.Auth;
-using StudentHub.Infrastructure.Identity;
+using StudentHub.Core.Entities.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,8 +15,8 @@ namespace StudentHub.Api.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IConfiguration _config;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _config;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
@@ -30,19 +30,14 @@ namespace StudentHub.Api.Controllers
             _config = config;
         }
 
-        // REGISTER NEW USER
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var existing = await _userManager.FindByEmailAsync(dto.Email);
-            if (existing != null)
-                return BadRequest("User with this email already exists.");
-
-            if (!await _roleManager.RoleExistsAsync("Student"))
-                await _roleManager.CreateAsync(new IdentityRole("Student"));
+            if (!await _roleManager.RoleExistsAsync(dto.Role))
+                return BadRequest("Invalid role");
 
             var user = new ApplicationUser
             {
@@ -57,29 +52,23 @@ namespace StudentHub.Api.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            await _userManager.AddToRoleAsync(user, "Student");
+            await _userManager.AddToRoleAsync(user, dto.Role);
 
-            return Ok(new { message = "User registered successfully" });
+            return Ok("User registered");
         }
 
-        // LOGIN USER
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null)
-                return Unauthorized("Invalid email or password");
+            if (user == null) return Unauthorized("Invalid email");
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
-            if (!result.Succeeded)
-                return Unauthorized("Invalid email or password");
+            var pass = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
+            if (!pass.Succeeded) return Unauthorized("Invalid password");
 
-            var token = await GenerateToken(user);
-
-            return Ok(new { token });
+            return Ok(new { token = await GenerateToken(user) });
         }
 
-        // GENERATE JWT TOKEN
         private async Task<string> GenerateToken(ApplicationUser user)
         {
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
@@ -94,18 +83,17 @@ namespace StudentHub.Api.Controllers
                 new Claim("LastName", user.LastName)
             };
 
-            foreach (var role in roles)
-                claims.Add(new Claim(ClaimTypes.Role, role));
+            foreach (var r in roles)
+                claims.Add(new Claim(ClaimTypes.Role, r));
 
             var creds = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                expires: DateTime.UtcNow.AddDays(7),
                 claims: claims,
-                signingCredentials: creds
-            );
+                expires: DateTime.UtcNow.AddDays(7),
+                signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

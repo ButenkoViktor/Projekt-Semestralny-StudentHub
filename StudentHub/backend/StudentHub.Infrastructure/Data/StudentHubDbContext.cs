@@ -1,31 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
-using StudentHub.Core.Entities.Users;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using StudentHub.Core.Entities.Identity;
+using StudentHub.Core.Entities.Groups;
 using StudentHub.Core.Entities.Chat;
 using StudentHub.Core.Entities.Announcements;
 using StudentHub.Core.Entities.Events;
 using StudentHub.Core.Entities.Files;
-using StudentHub.Core.Entities.Groups;
-using StudentHub.Core.Entities.Notes;
 using StudentHub.Core.Entities.Notifications;
 using StudentHub.Core.Entities.Schedule;
 using StudentHub.Core.Entities.Tasks;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using StudentHub.Infrastructure.Identity;
+using StudentHub.Core.Entities.Notes;
 
 namespace StudentHub.Infrastructure.Data
 {
-    // Data base context for StudentHub application
     public class StudentHubDbContext : IdentityDbContext<ApplicationUser>
     {
         public StudentHubDbContext(DbContextOptions<StudentHubDbContext> options)
             : base(options)
         {
         }
-
-        // Users
-        public DbSet<User> Users { get; set; }
 
         // Groups & Courses
         public DbSet<Group> Groups { get; set; }
@@ -64,7 +57,26 @@ namespace StudentHub.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Fluent API configs if needed
+            // Announcement -> Author (User)
+            modelBuilder.Entity<Announcement>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(a => a.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Chat: Message User relationship
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(m => m.User)
+                .WithMany(u => u.Messages)
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Chat: Participant User
+            modelBuilder.Entity<ChatParticipant>()
+                .HasOne(cp => cp.User)
+                .WithMany(u => u.ChatParticipants)
+                .HasForeignKey(cp => cp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
-using StudentHub.Core.Entities.Users;
+using StudentHub.Core.Entities.Identity;
+
 namespace StudentHub.Core.Entities.Chat
 {
     public class ChatParticipant
@@ -20,10 +21,11 @@ namespace StudentHub.Core.Entities.Chat
         /// Foreign key referencing the User entity.
         /// </summary>
         public string UserId { get; set; } = default!;
+
         /// <summary>
-        /// Gets or sets the user associated with the current context.
+        /// Gets or sets the user associated with the current application context.
         /// </summary>
-        public User User { get; set; } = default!;
+        public ApplicationUser User { get; set; } = default!;
         /// <summary>
         /// Gets or sets the date and time at which the user joined.
         /// </summary>

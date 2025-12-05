@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentHub.Core.Entities.Users;
+using StudentHub.Core.Entities.Identity;
 
 namespace StudentHub.Core.Entities.Notes
 {
@@ -35,9 +35,9 @@ namespace StudentHub.Core.Entities.Notes
         public string UploadedById { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the user who uploaded the item.
+        /// Gets or sets the user who uploaded the associated content.
         /// </summary>
-        public User UploadedBy { get; set; } = default!;
+        public ApplicationUser UploadedBy { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the date and time, in UTC, when the item was uploaded.

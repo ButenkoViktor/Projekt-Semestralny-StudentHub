@@ -1,10 +1,11 @@
-﻿using System;
+﻿using StudentHub.Core.Entities.Groups;
+using StudentHub.Core.Entities.Schedule;
+using StudentHub.Core.Entities.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentHub.Core.Entities.Schedule;
-using StudentHub.Core.Entities.Groups;
 
 namespace StudentHub.Core.Entities.Groups
 {
@@ -26,9 +27,14 @@ namespace StudentHub.Core.Entities.Groups
         public string? Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of schedule items associated with this course.
+        /// Gets or sets the collection of schedule items associated with the current instance.
         /// </summary>
-        public ICollection<Schedule.ScheduleItem>? ScheduleItems { get; set; }
+        public ICollection<ScheduleItem>? ScheduleItems { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of tasks associated with the current entity.
+        /// </summary>
+        public ICollection<TaskItem>? Tasks { get; set; }
     }
 
 }

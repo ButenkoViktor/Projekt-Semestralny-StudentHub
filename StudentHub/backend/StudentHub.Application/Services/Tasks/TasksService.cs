@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using StudentHub.Core.Entities.Tasks;
 using StudentHub.Infrastructure.Data;
 
@@ -23,10 +18,11 @@ namespace StudentHub.Application.Services.Tasks
             return await _db.Tasks.ToListAsync();
         }
 
-        public async Task<TaskItem> GetByIdAsync(int id)
+        public async Task<TaskItem?> GetByIdAsync(int id)
         {
             return await _db.Tasks
                 .Include(t => t.Attachments)
+                .Include(t => t.Submissions)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
@@ -52,6 +48,13 @@ namespace StudentHub.Application.Services.Tasks
             _db.TaskSubmissions.Add(submission);
             await _db.SaveChangesAsync();
             return submission;
+        }
+
+        public async Task<TaskSubmissionFile> SubmitAsyncFile(TaskSubmissionFile file)
+        {
+            _db.TaskSubmissionFiles.Add(file);
+            await _db.SaveChangesAsync();
+            return file;
         }
     }
 }

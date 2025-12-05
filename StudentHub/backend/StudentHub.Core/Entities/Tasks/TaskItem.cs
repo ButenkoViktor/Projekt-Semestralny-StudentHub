@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StudentHub.Core.Entities.Groups;
-using StudentHub.Core.Entities.Users;
 
 namespace StudentHub.Core.Entities.Tasks
 {
@@ -24,11 +23,6 @@ namespace StudentHub.Core.Entities.Tasks
         /// Gets or sets the descriptive text associated with the object.
         /// </summary>
         public string? Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date by which the item is due.
-        /// </summary>
-        public DateTime DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the item is published and visible to users.

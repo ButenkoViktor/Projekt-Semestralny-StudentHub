@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StudentHub.Api.Models.User;
-using StudentHub.Infrastructure.Identity;
+using StudentHub.Core.Entities.Identity;
 using System.Security.Claims;
 
 namespace StudentHub.Api.Controllers

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StudentHub.Core.Entities.Groups;
-
+using StudentHub.Core.Entities.Identity;
 
 namespace StudentHub.Core.Entities.Groups
 {
@@ -21,9 +21,9 @@ namespace StudentHub.Core.Entities.Groups
         public string Name { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the collection of students associated with this entity.
+        /// Gets or sets the collection of students associated with the application.
         /// </summary>
-        public ICollection<StudentHub.Core.Entities.Users.User>? Students { get; set; }
+        public ICollection<ApplicationUser>? Students { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of courses associated with the entity.

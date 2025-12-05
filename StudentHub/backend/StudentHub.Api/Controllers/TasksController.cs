@@ -4,7 +4,6 @@ using StudentHub.Api.Models.Tasks;
 using StudentHub.Api.Services;
 using StudentHub.Application.Services.Tasks;
 using StudentHub.Core.Entities.Tasks;
-using StudentHub.Api.Services;
 using System.Security.Claims;
 
 namespace StudentHub.Api.Controllers
@@ -46,7 +45,7 @@ namespace StudentHub.Api.Controllers
                 Title = dto.Title,
                 Description = dto.Description,
                 Deadline = dto.Deadline,
-                CourseId = dto.CourseId!.Value,
+                CourseId = dto.CourseId.Value,
                 GroupId = dto.GroupId
             };
 
@@ -54,57 +53,37 @@ namespace StudentHub.Api.Controllers
             return Ok(created);
         }
 
-        [HttpPost("{id:int}/attachments")]
-        public async Task<IActionResult> UploadAttachment(int id, IFormFile file)
-        {
-            var task = await _taskService.GetByIdAsync(id);
-            if (task == null) return NotFound();
-
-            var filePath = await _fileService.SaveFileAsync(file, "uploads/tasks");
-
-            task.Attachments.Add(new TaskAttachment
-            {
-                FileUrl = filePath,
-                TaskItemId = id
-            });
-
-            await _taskService.CreateAsync(task);
-            return Ok(filePath);
-        }
-
         [Authorize]
         [HttpPost("{id:int}/submit")]
         public async Task<IActionResult> Submit(int id, SubmitTaskDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var submission = new TaskSubmission
             {
-                TaskItemId = id,
+                TaskId = id,
                 UserId = userId,
                 AnswerText = dto.AnswerText,
                 SubmittedAt = DateTime.UtcNow
             };
 
             await _taskService.SubmitAsync(submission);
-
-            return Ok("Submitted");
+            return Ok(submission.Id);
         }
 
         [Authorize]
-        [HttpPost("{id:int}/submit-file")]
-        public async Task<IActionResult> SubmitFile(int id, IFormFile file)
+        [HttpPost("{submissionId:int}/submit-file")]
+        public async Task<IActionResult> SubmitFile(int submissionId, IFormFile file)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var fileUrl = await _fileService.SaveFileAsync(file, "uploads/task-submissions");
 
             var submissionFile = new TaskSubmissionFile
             {
-                TaskItemId = id,
-                UserId = userId,
-                FileUrl = fileUrl
+                FilePath = fileUrl,
+                FileName = file.FileName,
+                SubmissionId = submissionId
             };
+
+            var submission = await _taskService.SubmitAsyncFile(submissionFile);
 
             return Ok(submissionFile);
         }

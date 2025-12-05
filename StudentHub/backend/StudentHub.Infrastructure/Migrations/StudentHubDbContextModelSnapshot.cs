@@ -167,6 +167,10 @@ namespace StudentHub.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AuthorId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -184,6 +188,8 @@ namespace StudentHub.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("AuthorId1");
 
                     b.ToTable("Announcements");
                 });
@@ -311,10 +317,12 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UploadedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("UploadedById")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UploadedById");
 
                     b.ToTable("Files");
                 });
@@ -359,6 +367,87 @@ namespace StudentHub.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("StudentHub.Core.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Notes.Note", b =>
@@ -473,14 +562,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("TaskId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TaskItemId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -507,9 +589,6 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
@@ -521,6 +600,8 @@ namespace StudentHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Tasks");
                 });
@@ -540,9 +621,6 @@ namespace StudentHub.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TaskId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TaskItemId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -574,135 +652,14 @@ namespace StudentHub.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
-
-                    b.Property<int>("TaskItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SubmissionId");
 
                     b.ToTable("TaskSubmissionFiles");
-                });
-
-            modelBuilder.Entity("StudentHub.Core.Entities.Users.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AvatarUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("StudentHub.Infrastructure.Identity.ApplicationUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -716,7 +673,7 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("StudentHub.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -725,7 +682,7 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("StudentHub.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -740,7 +697,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudentHub.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -749,7 +706,7 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("StudentHub.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -758,9 +715,15 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("StudentHub.Core.Entities.Announcements.Announcement", b =>
                 {
-                    b.HasOne("StudentHub.Core.Entities.Users.User", "Author")
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -775,7 +738,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudentHub.Core.Entities.Users.User", "User")
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -794,7 +757,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudentHub.Core.Entities.Users.User", "User")
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "User")
                         .WithMany("ChatParticipants")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -805,6 +768,15 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("StudentHub.Core.Entities.Files.FileStorageRecord", b =>
+                {
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "UploadedBy")
+                        .WithMany()
+                        .HasForeignKey("UploadedById");
+
+                    b.Navigation("UploadedBy");
+                });
+
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Course", b =>
                 {
                     b.HasOne("StudentHub.Core.Entities.Groups.Group", null)
@@ -812,9 +784,18 @@ namespace StudentHub.Infrastructure.Migrations
                         .HasForeignKey("GroupId");
                 });
 
+            modelBuilder.Entity("StudentHub.Core.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("StudentHub.Core.Entities.Groups.Group", "Group")
+                        .WithMany("Students")
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("Group");
+                });
+
             modelBuilder.Entity("StudentHub.Core.Entities.Notes.Note", b =>
                 {
-                    b.HasOne("StudentHub.Core.Entities.Users.User", "UploadedBy")
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "UploadedBy")
                         .WithMany()
                         .HasForeignKey("UploadedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -825,7 +806,7 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("StudentHub.Core.Entities.Notifications.Notification", b =>
                 {
-                    b.HasOne("StudentHub.Core.Entities.Users.User", "User")
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -862,6 +843,15 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Navigation("Task");
                 });
 
+            modelBuilder.Entity("StudentHub.Core.Entities.Tasks.TaskItem", b =>
+                {
+                    b.HasOne("StudentHub.Core.Entities.Groups.Course", null)
+                        .WithMany("Tasks")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("StudentHub.Core.Entities.Tasks.TaskSubmission", b =>
                 {
                     b.HasOne("StudentHub.Core.Entities.Tasks.TaskItem", "Task")
@@ -870,7 +860,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudentHub.Core.Entities.Users.User", "User")
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -892,15 +882,6 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Navigation("Submission");
                 });
 
-            modelBuilder.Entity("StudentHub.Core.Entities.Users.User", b =>
-                {
-                    b.HasOne("StudentHub.Core.Entities.Groups.Group", "Group")
-                        .WithMany("Students")
-                        .HasForeignKey("GroupId");
-
-                    b.Navigation("Group");
-                });
-
             modelBuilder.Entity("StudentHub.Core.Entities.Chat.ChatRoom", b =>
                 {
                     b.Navigation("Messages");
@@ -911,6 +892,8 @@ namespace StudentHub.Infrastructure.Migrations
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Course", b =>
                 {
                     b.Navigation("ScheduleItems");
+
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Group", b =>
@@ -918,6 +901,13 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("StudentHub.Core.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("ChatParticipants");
+
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Tasks.TaskItem", b =>
@@ -930,13 +920,6 @@ namespace StudentHub.Infrastructure.Migrations
             modelBuilder.Entity("StudentHub.Core.Entities.Tasks.TaskSubmission", b =>
                 {
                     b.Navigation("Files");
-                });
-
-            modelBuilder.Entity("StudentHub.Core.Entities.Users.User", b =>
-                {
-                    b.Navigation("ChatParticipants");
-
-                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

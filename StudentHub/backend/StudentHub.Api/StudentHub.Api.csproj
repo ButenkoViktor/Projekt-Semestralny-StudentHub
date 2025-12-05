@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StudentHub.Application\StudentHub.Application.csproj" />
-    <ProjectReference Include="..\StudentHub.Core\StudentHub.Core.csproj" />
     <ProjectReference Include="..\StudentHub.Infrastructure\StudentHub.Infrastructure.csproj" />
   </ItemGroup>
 

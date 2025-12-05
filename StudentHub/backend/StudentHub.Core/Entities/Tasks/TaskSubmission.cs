@@ -1,11 +1,10 @@
-﻿using StudentHub.Core.Entities.Users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StudentHub.Core.Entities.Tasks;
-using StudentHub.Core.Entities.Users;
+using StudentHub.Core.Entities.Identity;
 
 namespace StudentHub.Core.Entities.Tasks
 {
@@ -24,7 +23,7 @@ namespace StudentHub.Core.Entities.Tasks
         /// <summary>
         /// Gets or sets the user associated with the current context.
         /// </summary>
-        public User User { get; set; } = default!;
+        public ApplicationUser User { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the unique identifier for the task. Foreign key referencing the Task entity.
@@ -45,11 +44,6 @@ namespace StudentHub.Core.Entities.Tasks
         /// Gets or sets the text of the answer.
         /// </summary>
         public string? AnswerText { get; set; }
-
-        /// <summary>
-        /// Gets or sets the unique identifier for the task item.
-        /// </summary>
-        public int TaskItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of files associated with the task submission.
