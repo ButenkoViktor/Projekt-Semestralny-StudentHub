@@ -51,34 +51,43 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// AUTO ROLE SEEDING
+// Seed roles and admin user
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = { "Admin", "Teacher", "Student" };
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
+    string[] roles = new[] { "Admin", "Teacher", "Student" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 
-    // Create admin user
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var adminEmail = "admin@admin.com";
-
+    // seed admin
+    var adminEmail = "admin@local";
     var admin = await userManager.FindByEmailAsync(adminEmail);
+
     if (admin == null)
     {
-        var newAdmin = new ApplicationUser
+        var adminUser = new ApplicationUser
         {
             UserName = adminEmail,
             Email = adminEmail,
             FirstName = "System",
             LastName = "Admin"
         };
-        await userManager.CreateAsync(newAdmin, "Admin123!");
-        await userManager.AddToRoleAsync(newAdmin, "Admin");
+        var createRes = await userManager.CreateAsync(adminUser, "Admin123!");
+        if (createRes.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+        else
+        {
+            // optional: log errors
+            foreach (var e in createRes.Errors) Console.WriteLine(e.Description);
+        }
     }
 }
 
