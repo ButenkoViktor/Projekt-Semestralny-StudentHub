@@ -1,0 +1,113 @@
+
+.login-bg {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background: linear-gradient(135deg, #0f172a, #111827 45%, #1f2937);
+    background-size: 200% 200%;
+    animation: loginGradient 16s ease infinite;
+}
+
+.login-container {
+    width: min(440px, 100%);
+    background: rgba(17, 24, 39, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    padding: 36px 32px;
+    color: #e5e7eb;
+}
+
+.login-container h2 {
+    margin-bottom: 8px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.login-container p {
+    margin-bottom: 28px;
+    color: #9ca3af;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    background: #0b1220;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    color: #e5e7eb;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+    transform: translateY(-1px);
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0 0;
+    background: linear-gradient(135deg, #f43f5e, #ef4444);
+    border: none;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(244, 63, 94, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.login-container button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 16px 36px rgba(244, 63, 94, 0.42);
+}
+
+.login-container button:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 22px rgba(244, 63, 94, 0.32);
+}
+
+.links {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.links a {
+    color: #38bdf8;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.links a:hover {
+    color: #a5b4fc;
+    transform: translateY(-1px);
+    text-decoration: underline;
+}
+
+@keyframes loginGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}

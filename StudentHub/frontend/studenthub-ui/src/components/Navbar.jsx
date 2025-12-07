@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { getToken, getRoles } from "../api/authService";
 
 export default function Navbar() {
-    let roles = getRoles();
-    let logged = !!getToken();
+    const logged = !!getToken();
+    const roles = getRoles();
 
     return (
         <nav>

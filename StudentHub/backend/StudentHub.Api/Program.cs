@@ -9,7 +9,15 @@ using StudentHub.Api.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// Services CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact",
+        policy => policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin());
+});
 // DB
 builder.Services.AddDbContext<StudentHubDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -50,6 +58,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseCors("AllowReact");
 
 // Seed roles and admin user
 using (var scope = app.Services.CreateScope())
@@ -91,6 +100,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseCors("AllowReact");
 app.UseSwagger();
 app.UseSwaggerUI();
 
