@@ -1,36 +1,29 @@
-import { useState } from "react";
-import { login } from "../api/authService";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { AuthContext } from "../auth/AuthContext";
 
 export default function Login() {
+    const { login } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();
 
     async function handleLogin(e) {
         e.preventDefault();
         try {
-            let res = await login(email, password);
-
-            localStorage.setItem("token", res.token);
-
-            navigate("/dashboard");
+            await login(email, password);
         } catch (err) {
             alert("Wrong email or password");
         }
     }
 
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleLogin}>
-                <input placeholder="Email"
-                       onChange={(e) => setEmail(e.target.value)} />
-                <input placeholder="Password"
-                       type="password"
-                       onChange={(e) => setPassword(e.target.value)} />
-                <button>Login</button>
-            </form>
-        </div>
+        <form onSubmit={handleLogin}>
+            <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+            <input
+                placeholder="Password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            <button>Login</button>
+        </form>
     );
 }

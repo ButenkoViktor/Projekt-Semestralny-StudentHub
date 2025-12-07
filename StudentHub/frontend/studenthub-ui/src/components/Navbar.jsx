@@ -1,13 +1,21 @@
 import { Link } from "react-router-dom";
+import { getToken, getRoles } from "../api/authService";
 
-function Navbar() {
+export default function Navbar() {
+    let roles = getRoles();
+    let logged = !!getToken();
+
     return (
-        <nav style={{ padding: 10, background: "#eee" }}>
-            <Link to="/" style={{ marginRight: 10 }}>Home</Link>
-            <Link to="/login" style={{ marginRight: 10 }}>Login</Link>
-            <Link to="/dashboard">Dashboard</Link>
+        <nav>
+            <Link to="/">Home</Link>
+
+            {!logged && <Link to="/login">Login</Link>}
+
+            {logged && <Link to="/dashboard">Dashboard</Link>}
+
+            {roles.includes("Admin") && <Link to="/admin">Admin Panel</Link>}
+
+            {roles.includes("Teacher") && <Link to="/teacher">Teacher Tools</Link>}
         </nav>
     );
 }
-
-export default Navbar;
