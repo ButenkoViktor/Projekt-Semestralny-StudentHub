@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentHub.Core.Entities.Groups;
 
 namespace StudentHub.Core.Entities.Schedule
 {
@@ -50,5 +49,10 @@ namespace StudentHub.Core.Entities.Schedule
         /// Gets or sets the group associated with this instance.
         /// </summary>
         public Group? Group { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the lesson.
+        /// </summary>
+        public string? LessonType { get; set; }
     }
 }

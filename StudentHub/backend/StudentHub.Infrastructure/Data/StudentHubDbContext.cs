@@ -73,10 +73,42 @@ namespace StudentHub.Infrastructure.Data
 
             // Chat: Participant User
             modelBuilder.Entity<ChatParticipant>()
+        .HasKey(cp => new { cp.ChatRoomId, cp.UserId });
+
+            modelBuilder.Entity<ChatParticipant>()
+                .HasOne(cp => cp.ChatRoom)
+                .WithMany(cr => cr.Participants)
+                .HasForeignKey(cp => cp.ChatRoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ChatParticipant>()
                 .HasOne(cp => cp.User)
                 .WithMany(u => u.ChatParticipants)
                 .HasForeignKey(cp => cp.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // TaskSubmission -> TaskItem (1:n)
+            modelBuilder.Entity<TaskSubmission>()
+                .HasOne(ts => ts.Task)
+                .WithMany(t => t.Submissions)
+                .HasForeignKey(ts => ts.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TaskSubmissionFile -> TaskSubmission (1:n)
+            modelBuilder.Entity<TaskSubmissionFile>()
+                .HasOne(f => f.Submission)
+                .WithMany(s => s.Files)
+                .HasForeignKey(f => f.SubmissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes: speed up queries
+            modelBuilder.Entity<ScheduleItem>()
+                .HasOne(s => s.Course)
+                .WithMany(c => c.ScheduleItems)
+                .HasForeignKey(s => s.CourseId);
+
+            modelBuilder.Entity<TaskItem>()
+                .HasIndex(t => t.Deadline);
         }
     }
 }
