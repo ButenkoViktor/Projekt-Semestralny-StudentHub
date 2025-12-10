@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using StudentHub.Core.Entities.Identity;
-using StudentHub.Core.Entities.Groups;
-using StudentHub.Core.Entities.Chat;
 using StudentHub.Core.Entities.Announcements;
+using StudentHub.Core.Entities.Chat;
 using StudentHub.Core.Entities.Events;
 using StudentHub.Core.Entities.Files;
+using StudentHub.Core.Entities.Groups;
+using StudentHub.Core.Entities.Identity;
+using StudentHub.Core.Entities.Notes;
 using StudentHub.Core.Entities.Notifications;
 using StudentHub.Core.Entities.Schedule;
 using StudentHub.Core.Entities.Tasks;
-using StudentHub.Core.Entities.Notes;
+using StudentHub.Infrastructure.Configurations;
 
 namespace StudentHub.Infrastructure.Data
 {
@@ -24,10 +25,10 @@ namespace StudentHub.Infrastructure.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<Course> Courses { get; set; }
 
-        // Chat
-        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
         public DbSet<ChatParticipant> ChatParticipants { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<ChatRoom> ChatRooms { get; set; }
 
         // Events
         public DbSet<Event> Events { get; set; }
@@ -50,19 +51,12 @@ namespace StudentHub.Infrastructure.Data
         // Notes
         public DbSet<Note> Notes { get; set; }
 
-        // Announcements
-        public DbSet<Announcement> Announcements { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Announcement -> Author (User)
-            modelBuilder.Entity<Announcement>()
-                .HasOne<ApplicationUser>()
-                .WithMany()
-                .HasForeignKey(a => a.AuthorId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Apply announcement configuration
+            modelBuilder.ApplyConfiguration(new AnnouncementConfiguration());
 
             // Chat: Message User relationship
             modelBuilder.Entity<ChatMessage>()
@@ -71,9 +65,9 @@ namespace StudentHub.Infrastructure.Data
                 .HasForeignKey(m => m.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Chat: Participant User
+            // ChatParticipant: composite key
             modelBuilder.Entity<ChatParticipant>()
-        .HasKey(cp => new { cp.ChatRoomId, cp.UserId });
+                .HasKey(cp => new { cp.ChatRoomId, cp.UserId });
 
             modelBuilder.Entity<ChatParticipant>()
                 .HasOne(cp => cp.ChatRoom)
@@ -86,6 +80,7 @@ namespace StudentHub.Infrastructure.Data
                 .WithMany(u => u.ChatParticipants)
                 .HasForeignKey(cp => cp.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
 
             // TaskSubmission -> TaskItem (1:n)
             modelBuilder.Entity<TaskSubmission>()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using StudentHub.Core.Entities.Announcements;
 using StudentHub.Core.Entities.Chat;
 using StudentHub.Core.Entities.Groups;
 using System;
@@ -32,14 +33,9 @@ namespace StudentHub.Core.Entities.Identity
         /// Gets or sets the group associated with this instance.
         /// </summary>
         public Group? Group { get; set; }
-
-        /// <summary>
-        /// Gets or sets the collection of chat messages associated with the chat session.
-        /// </summary>
         public ICollection<ChatMessage>? Messages { get; set; }
-        /// <summary>
-        /// Gets or sets the collection of participants in the chat.
-        /// </summary>
         public ICollection<ChatParticipant>? ChatParticipants { get; set; }
+
+        public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
     }
 }

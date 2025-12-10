@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StudentHub.Api.Models.Annoucements;
 using StudentHub.Api.Services;
+using StudentHub.Api.Services.Announcements;
 using StudentHub.Api.Services.Shedule;
 using StudentHub.Application.Services.Tasks;
 using StudentHub.Core.Entities.Identity;
 using StudentHub.Infrastructure.Data;
+using StudentHub.Infrastructure.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +37,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
+
 .AddJwtBearer(options =>
 {
     var jwtKey = builder.Configuration["Jwt:Key"];
@@ -49,11 +53,11 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key),
     };
 });
-
 // App services
 builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

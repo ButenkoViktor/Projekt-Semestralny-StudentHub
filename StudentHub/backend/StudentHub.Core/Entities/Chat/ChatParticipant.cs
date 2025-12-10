@@ -6,10 +6,6 @@ namespace StudentHub.Core.Entities.Chat
     public class ChatParticipant
     {
         /// <summary>
-        /// Primary key of the chat participant.
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// Gets or sets the unique identifier for the chat room. Foreign key referencing the ChatRoom entity.
         /// </summary>
         public int ChatRoomId { get; set; }

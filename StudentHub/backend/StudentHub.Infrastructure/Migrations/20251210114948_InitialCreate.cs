@@ -149,12 +149,13 @@ namespace StudentHub.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Published = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    GroupId = table.Column<int>(type: "int", nullable: true),
                     TargetGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AuthorId1 = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -165,12 +166,6 @@ namespace StudentHub.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Announcements_AspNetUsers_AuthorId1",
-                        column: x => x.AuthorId1,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,15 +285,13 @@ namespace StudentHub.Infrastructure.Migrations
                 name: "ChatParticipants",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     ChatRoomId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     JoinedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatParticipants", x => x.Id);
+                    table.PrimaryKey("PK_ChatParticipants", x => new { x.ChatRoomId, x.UserId });
                     table.ForeignKey(
                         name: "FK_ChatParticipants_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -389,7 +382,8 @@ namespace StudentHub.Infrastructure.Migrations
                     TeacherName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GroupId = table.Column<int>(type: "int", nullable: true)
+                    GroupId = table.Column<int>(type: "int", nullable: true),
+                    LessonType = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -507,11 +501,6 @@ namespace StudentHub.Infrastructure.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Announcements_AuthorId1",
-                table: "Announcements",
-                column: "AuthorId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -566,11 +555,6 @@ namespace StudentHub.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChatParticipants_ChatRoomId",
-                table: "ChatParticipants",
-                column: "ChatRoomId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ChatParticipants_UserId",
                 table: "ChatParticipants",
                 column: "UserId");
@@ -614,6 +598,11 @@ namespace StudentHub.Infrastructure.Migrations
                 name: "IX_Tasks_CourseId",
                 table: "Tasks",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tasks_Deadline",
+                table: "Tasks",
+                column: "Deadline");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskSubmissionFiles_SubmissionId",
