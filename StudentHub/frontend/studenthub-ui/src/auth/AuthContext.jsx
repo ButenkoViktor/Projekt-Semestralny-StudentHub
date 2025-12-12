@@ -1,39 +1,27 @@
 import { createContext, useState, useEffect } from "react";
+import { loginRequest, getToken } from "../api/authService";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
+
     const login = async (email, password) => {
-        const res = await fetch("http://localhost:5174/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-
-        if (!res.ok) {
-            throw new Error("Invalid credentials");
-        }
-
-        const data = await res.json();
-
-        localStorage.setItem("token", data.token);
-
-        await fetchUser(); 
+        const result = await loginRequest(email, password);
+        if (result.success) await fetchUser();
+        else throw new Error("Invalid credentials");
     };
 
-  
     const logout = () => {
         localStorage.removeItem("token");
         setUser(null);
     };
 
- 
     async function fetchUser() {
-        const token = localStorage.getItem("token");
+        const token = getToken();
         if (!token) return;
 
-        const res = await fetch("http://localhost:5174/api/user/me", {
+        const res = await fetch("https://localhost:7091/api/User/me", {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -43,7 +31,6 @@ export function AuthProvider({ children }) {
         }
     }
 
-   
     useEffect(() => {
         fetchUser();
     }, []);
