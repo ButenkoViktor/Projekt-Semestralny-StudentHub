@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using StudentHub.Api.Models.Annoucements;
+using StudentHub.Api.Services.Chat;
+using StudentHub.Api.Hubs;
 using StudentHub.Api.Services;
 using StudentHub.Api.Services.Announcements;
 using StudentHub.Api.Services.Shedule;
@@ -37,7 +38,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-
 .AddJwtBearer(options =>
 {
     var jwtKey = builder.Configuration["Jwt:Key"];
@@ -45,12 +45,31 @@ builder.Services.AddAuthentication(options =>
 
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = false,
         ValidateAudience = false,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+
+    // Allow passing token in SignalR WebSocket URL
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/chat-hub"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
     };
 });
 // App services
@@ -58,11 +77,15 @@ builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddSignalR();
+// Controllers and Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+// Build app
 var app = builder.Build();
+
 app.UseCors("AllowReact");
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -70,8 +93,9 @@ app.UseSwaggerUI();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+app.MapHub<ChatHub>("/chat-hub");
 // Seed data
 await SeedData.InitializeAsync(app);
+// Run app
 app.Run();
