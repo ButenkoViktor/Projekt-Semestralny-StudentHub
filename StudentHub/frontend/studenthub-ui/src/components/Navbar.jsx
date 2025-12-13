@@ -13,6 +13,8 @@ export default function Navbar() {
 
             {logged && <Link to="/dashboard">Dashboard</Link>}
 
+            {!logged && <Link to="/register">Register</Link>}
+
             {roles.includes("Admin") && <Link to="/admin">Admin Panel</Link>}
 
             {roles.includes("Teacher") && <Link to="/teacher">Teacher Tools</Link>}

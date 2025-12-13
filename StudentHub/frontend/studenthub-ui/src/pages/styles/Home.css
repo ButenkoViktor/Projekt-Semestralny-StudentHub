@@ -1,0 +1,97 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #0f172a;
+    height: 100%;
+}
+
+
+.home-container {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    color: #e6e6e6;
+    background-color: #0b1226;
+}
+
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #0f172a, #111827);
+    color: #ffffff;
+}
+
+.hero h1 {
+    font-size: 60px;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.hero-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn {
+    width: 230px;
+    padding: 14px;
+    margin: 0;
+    background: linear-gradient(135deg, #f43f5e, #ef4444);
+    border: none;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(244, 63, 94, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 35px rgba(244, 63, 94, 0.42);
+    filter: brightness(1.15);
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 60px 20px;
+}
+
+.feature-card {
+    width: 280px;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    background: #101a33;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.35);
+    transition: 0.2s;
+    color: #d8e0ff;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #0a1429;
+    color: #9aa4c6;
+    margin-top: 40px;
+}
