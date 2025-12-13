@@ -24,7 +24,7 @@ export default function Login() {
       <div className="login-container">
         <h2>Log in</h2>
 
-        <form onSubmit={handleLogin}> 
+        <form onSubmit={handleLogin}>
           <input
             type="email"
             placeholder="Email"
@@ -41,14 +41,15 @@ export default function Login() {
             required
           />
 
-          <button type="submit" className="log">Log in</button>
+          <button type="submit">Log in</button>
         </form>
-                <div className="links">
-                    <a href="/forgot">Forgot your password?</a>
-                    <a href="/register">Register as a new user</a>
-                    <a href="/resend">Resend email confirmation</a>
-                </div>
-            </div>
+
+        <div className="links">
+          <a href="/forgot">Forgot your password?</a>
+          <a href="/register">Register as a new user</a>
+          <a href="/resend">Resend email confirmation</a>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

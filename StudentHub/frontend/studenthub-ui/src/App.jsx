@@ -11,8 +11,8 @@ function App() {
 
   return (
     <>
-      {location.pathname !== "/" && <Navbar />}
-      
+      {!["/", "/login", "/register"].includes(location.pathname) && <Navbar />}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

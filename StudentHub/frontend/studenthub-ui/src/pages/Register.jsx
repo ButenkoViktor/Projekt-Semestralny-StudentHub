@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { registerRequest } from "../api/authService";
+import "./styles/Login.css";
 
 export default function Register() {
 
@@ -11,13 +12,14 @@ export default function Register() {
     role: "Student"
   });
 
+  const [openSelect, setOpenSelect] = useState(false);
+
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     const result = await registerRequest(form);
 
     if (result.ok) {
@@ -28,13 +30,19 @@ export default function Register() {
     }
   }
 
+  function pickRole(role) {
+    setForm({ ...form, role });
+    setOpenSelect(false);
+  }
+
   return (
     <div className="login-bg">
-      <div className="login-container">
+      <div className={`login-container ${openSelect ? "expanded" : ""}`}>
+
         <h2>Register</h2>
 
         <form onSubmit={handleSubmit}>
-          
+
           <input
             name="firstName"
             placeholder="First name"
@@ -69,17 +77,23 @@ export default function Register() {
             required
           />
 
-          <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            required
-          >
-            <option value="Student">Student</option>
-            <option value="Teacher">Teacher</option>
-          </select>
+          {/* ---- CUSTOM SELECT ---- */}
+          <div className={`custom-select ${openSelect ? "open" : ""}`}>
+            <div
+              className="custom-select-header"
+              onClick={() => setOpenSelect(!openSelect)}
+            >
+              {form.role}
+            </div>
 
-          <button type="submit" className="log">Register</button>
+            <div className="custom-select-options">
+              <div onClick={() => pickRole("Student")}>Student</div>
+              <div onClick={() => pickRole("Teacher")}>Teacher</div>
+            </div>
+          </div>
+
+          <button type="submit">Register</button>
+
         </form>
 
       </div>
