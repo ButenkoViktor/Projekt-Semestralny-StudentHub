@@ -9,6 +9,7 @@ using StudentHub.Api.Services.Chat;
 using StudentHub.Api.Services.Groups;
 using StudentHub.Api.Services.Shedule;
 using StudentHub.API.Services.Courses;
+using StudentHub.API.Services.Groups;
 using StudentHub.Application.Services.Tasks;
 using StudentHub.Core.Entities.Identity;
 using StudentHub.Infrastructure.Data;
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddSignalR();
 // Controllers and Swagger
