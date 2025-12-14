@@ -7,7 +7,8 @@ using StudentHub.Api.Services;
 using StudentHub.Api.Services.Announcements;
 using StudentHub.Api.Services.Chat;
 using StudentHub.Api.Services.Groups;
-using StudentHub.Api.Services.Shedule;
+using StudentHub.Api.Services.Notifications;
+using StudentHub.Api.Services.Schedule;
 using StudentHub.API.Services.Courses;
 using StudentHub.API.Services.Groups;
 using StudentHub.Application.Services.Tasks;
@@ -99,6 +100,7 @@ builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddSignalR();
 
@@ -125,6 +127,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chat-hub");
+app.MapHub<NotificationHub>("/notifications-hub");
 
 
 //  SEED DATA
