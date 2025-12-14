@@ -1,4 +1,4 @@
-﻿namespace StudentHub.Api.Models.Shedule
+﻿namespace StudentHub.Api.Models.Schedule
 {
     public class ScheduleDto
     {

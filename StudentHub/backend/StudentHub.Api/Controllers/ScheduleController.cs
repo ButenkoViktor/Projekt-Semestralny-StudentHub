@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StudentHub.Api.Models.Shedule;
-using StudentHub.Api.Services.Shedule;
+using StudentHub.Api.Models.Schedule;
+using StudentHub.Api.Services.Schedule;
+using StudentHub.Core.Entities.Schedule;
 
 namespace StudentHub.Api.Controllers
 {
     [ApiController]
-    [Route("api/schedule")]
+    [Route("api/[controller]")]
     public class ScheduleController : ControllerBase
     {
         private readonly IScheduleService _service;
@@ -16,27 +17,84 @@ namespace StudentHub.Api.Controllers
             _service = service;
         }
 
-        [HttpGet("group/{groupId}")]
-        public async Task<IActionResult> GetGroupSchedule(int groupId)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ScheduleDto>>> GetAll()
         {
-            var data = await _service.GetGroupSchedule(groupId);
-            return Ok(data);
+            var items = await _service.GetAllAsync();
+
+            return Ok(items.Select(s => new ScheduleDto
+            {
+                Id = s.Id,
+                CourseTitle = s.Course.Title,
+                TeacherName = s.TeacherName,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime,
+                GroupId = s.GroupId,
+                LessonType = s.LessonType
+            }));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ScheduleDto>> Get(int id)
+        {
+            var item = await _service.GetByIdAsync(id);
+            if (item == null) return NotFound();
+
+            return new ScheduleDto
+            {
+                Id = item.Id,
+                CourseTitle = item.Course.Title,
+                TeacherName = item.TeacherName,
+                StartTime = item.StartTime,
+                EndTime = item.EndTime,
+                GroupId = item.GroupId,
+                LessonType = item.LessonType
+            };
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,Teacher")]
-        public async Task<IActionResult> Create(CreateScheduleDto dto)
+        public async Task<ActionResult> Create(CreateScheduleDto dto)
         {
-            var item = await _service.Create(dto);
-            return Ok(item);
+            var created = await _service.CreateAsync(new ScheduleItem
+            {
+                CourseId = dto.CourseId,
+                TeacherName = dto.TeacherName,
+                StartTime = dto.StartTime,
+                EndTime = dto.EndTime,
+                GroupId = dto.GroupId,
+                LessonType = dto.LessonType
+            });
+
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Teacher")]
+        public async Task<ActionResult> Update(int id, UpdateScheduleDto dto)
+        {
+            var updated = await _service.UpdateAsync(id, new ScheduleItem
+            {
+                Id = id,
+                CourseId = dto.CourseId,
+                TeacherName = dto.TeacherName,
+                StartTime = dto.StartTime,
+                EndTime = dto.EndTime,
+                GroupId = dto.GroupId,
+                LessonType = dto.LessonType
+            });
+
+            if (updated == null) return NotFound();
+            return Ok(updated);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Teacher")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var ok = await _service.Delete(id);
-            return ok ? Ok() : NotFound();
+            var ok = await _service.DeleteAsync(id);
+            if (!ok) return NotFound();
+            return NoContent();
         }
     }
 }

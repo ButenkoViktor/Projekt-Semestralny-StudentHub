@@ -1,6 +1,6 @@
-﻿namespace StudentHub.Api.Models.Shedule
+﻿namespace StudentHub.Api.Models.Schedule
 {
-    public class CreateScheduleDto
+    public class UpdateScheduleDto
     {
         public int CourseId { get; set; }
         public string TeacherName { get; set; } = default!;
