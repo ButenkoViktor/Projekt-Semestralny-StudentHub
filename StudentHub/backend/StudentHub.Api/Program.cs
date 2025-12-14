@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +17,27 @@ using StudentHub.Infrastructure.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-// Services CORS
+
+//  DB 
+string? conn = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+if (!DatabaseExists(conn))
+{
+    Console.WriteLine("⚠SQLEXPRESS not found.");
+
+    conn = "Server=(localdb)\\MSSQLLocalDB;Database=StudentHubDb;Trusted_Connection=True;";
+}
+
+builder.Services.AddDbContext<StudentHubDbContext>(options =>
+    options.UseSqlServer(conn, sql =>
+    {
+        sql.EnableRetryOnFailure(); 
+    })
+);
+
+//  CORS
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact",
@@ -26,16 +46,15 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyOrigin());
 });
-// DB
-builder.Services.AddDbContext<StudentHubDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity
+//  IDENTITY
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<StudentHubDbContext>()
     .AddDefaultTokenProviders();
 
-// JWT
+//  JWT
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -43,9 +62,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    var jwtKey = builder.Configuration["Jwt:Key"];
-    var key = Encoding.UTF8.GetBytes(jwtKey);
-
+    var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
 
@@ -57,25 +74,24 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 
-    // Allow passing token in SignalR WebSocket URL
+    // SignalR
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
         {
-            var accessToken = context.Request.Query["access_token"];
-            var path = context.HttpContext.Request.Path;
-
-            if (!string.IsNullOrEmpty(accessToken) &&
-                path.StartsWithSegments("/chat-hub"))
+            var token = context.Request.Query["access_token"];
+            if (!string.IsNullOrEmpty(token) &&
+                context.HttpContext.Request.Path.StartsWithSegments("/chat-hub"))
             {
-                context.Token = accessToken;
+                context.Token = token;
             }
-
             return Task.CompletedTask;
         }
     };
 });
-// App services
+
+//  SERVICES
+
 builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
@@ -83,24 +99,50 @@ builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+
 builder.Services.AddSignalR();
-// Controllers and Swagger
+
+
+//  MVC + SWAGGER
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-// Build app
+
+
+//  APP
+
 var app = builder.Build();
 
 app.UseCors("AllowReact");
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.MapHub<ChatHub>("/chat-hub");
-// Seed data
+
+
+//  SEED DATA
+
 await SeedData.InitializeAsync(app);
-// Run app
+
 app.Run();
+
+static bool DatabaseExists(string conn)
+{
+    try
+    {
+        using var testConn = new Microsoft.Data.SqlClient.SqlConnection(conn);
+        testConn.Open();
+        return true;
+    }
+    catch
+    {
+        return false;
+    }
+}
