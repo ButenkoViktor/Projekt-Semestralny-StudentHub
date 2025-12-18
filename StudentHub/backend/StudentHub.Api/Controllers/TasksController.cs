@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentHub.Api.Models.Tasks;
-using StudentHub.Api.Services;
-using StudentHub.Application.Services.Tasks;
+using StudentHub.Api.Services.Files;
+using StudentHub.Api.Services.Tasks;
 using StudentHub.Core.Entities.Tasks;
 using System.Security.Claims;
 
@@ -12,28 +12,28 @@ namespace StudentHub.Api.Controllers
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        private readonly ITasksService _taskService;
+        private readonly ITaskService _tasksService;
         private readonly IFileService _fileService;
 
-        public TasksController(ITasksService taskService, IFileService fileService)
+        public TasksController(
+            ITaskService tasksService,
+            IFileService fileService)
         {
-            _taskService = taskService;
+            _tasksService = tasksService;
             _fileService = fileService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var tasks = await _taskService.GetAllAsync();
-            return Ok(tasks);
+            return Ok(await _tasksService.GetAllAsync());
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            var task = await _taskService.GetByIdAsync(id);
-            if (task == null) return NotFound();
-            return Ok(task);
+            var task = await _tasksService.GetByIdAsync(id);
+            return task == null ? NotFound() : Ok(task);
         }
 
         [Authorize(Roles = "Teacher,Admin")]
@@ -45,11 +45,11 @@ namespace StudentHub.Api.Controllers
                 Title = dto.Title,
                 Description = dto.Description,
                 Deadline = dto.Deadline,
-                CourseId = dto.CourseId.Value,
+                CourseId = dto.CourseId,
                 GroupId = dto.GroupId
             };
 
-            var created = await _taskService.CreateAsync(task);
+            var created = await _tasksService.CreateAsync(task);
             return Ok(created);
         }
 
@@ -57,35 +57,40 @@ namespace StudentHub.Api.Controllers
         [HttpPost("{id:int}/submit")]
         public async Task<IActionResult> Submit(int id, SubmitTaskDto dto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var submission = new TaskSubmission
             {
                 TaskId = id,
-                UserId = userId,
+                UserId = userId!,
                 AnswerText = dto.AnswerText,
                 SubmittedAt = DateTime.UtcNow
             };
 
-            await _taskService.SubmitAsync(submission);
-            return Ok(submission.Id);
+            var created = await _tasksService.SubmitAsync(submission);
+            return Ok(created);
         }
 
         [Authorize]
-        [HttpPost("{submissionId:int}/submit-file")]
-        public async Task<IActionResult> SubmitFile(int submissionId, IFormFile file)
+        [HttpPost("submission/{submissionId:int}/file")]
+        public async Task<IActionResult> UploadSubmissionFile(
+            int submissionId,
+            IFormFile file)
         {
-            var fileUrl = await _fileService.SaveFileAsync(file, "uploads/task-submissions");
+            var record = await _fileService.UploadAsync(
+                file,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+            );
 
             var submissionFile = new TaskSubmissionFile
             {
-                FilePath = fileUrl,
-                FileName = file.FileName,
-                SubmissionId = submissionId
+                SubmissionId = submissionId,
+                FileName = record.FileName,
+                FilePath = record.FilePath
             };
 
-            var submission = await _taskService.SubmitAsyncFile(submissionFile);
-
-            return Ok(submissionFile);
+            var created = await _tasksService.AddSubmissionFileAsync(submissionFile);
+            return Ok(created);
         }
     }
 }

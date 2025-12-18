@@ -11,7 +11,8 @@ using StudentHub.Api.Services.Notifications;
 using StudentHub.Api.Services.Schedule;
 using StudentHub.API.Services.Courses;
 using StudentHub.API.Services.Groups;
-using StudentHub.Application.Services.Tasks;
+using StudentHub.Api.Services.Tasks;
+using StudentHub.Api.Services.Files;
 using StudentHub.Core.Entities.Identity;
 using StudentHub.Infrastructure.Data;
 using StudentHub.Infrastructure.Services;
@@ -93,8 +94,8 @@ builder.Services.AddAuthentication(options =>
 
 //  SERVICES
 
-builder.Services.AddScoped<ITasksService, TasksService>();
-builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IFileService, FileService>(); 
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddScoped<IChatService, ChatService>();
