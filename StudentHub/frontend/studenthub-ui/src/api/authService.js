@@ -9,7 +9,10 @@ export async function loginRequest(email, password) {
     body: JSON.stringify({ email, password })
   });
 
-  if (!res.ok) return { success: false };
+  if (!res.ok) {
+    const msg = await res.text();
+    return { success: false, message: msg };
+  }
 
   const data = await res.json();
   localStorage.setItem("token", data.token);
@@ -24,7 +27,12 @@ export async function registerRequest(form) {
     body: JSON.stringify(form)
   });
 
-  return res;
+  if (!res.ok) {
+    const msg = await res.text();
+    return { success: false, message: msg };
+  }
+
+  return { success: true };
 }
 
 export function getToken() {
@@ -36,7 +44,6 @@ export function getRoles() {
   if (!token) return [];
 
   const decoded = jwtDecode(token);
-
   const roles =
     decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 

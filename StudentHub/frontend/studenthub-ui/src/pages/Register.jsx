@@ -10,23 +10,11 @@ export default function Register() {
     password: "",
     role: "Student"
   });
+
   const [openSelect, setOpenSelect] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    const result = await registerRequest(form);
-
-    if (result.ok) {
-      alert("Registration successful! Now you can login.");
-      window.location.href = "/login";
-    } else {
-      alert(result.message || "Registration failed");
-    }
   }
 
   function pickRole(role) {
@@ -34,14 +22,25 @@ export default function Register() {
     setOpenSelect(false);
   }
 
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const result = await registerRequest(form);
+
+    if (result.success) {
+      alert("Registration successful!");
+      window.location.href = "/login";
+    } else {
+      alert(result.message || "Registration failed");
+    }
+  }
+
   return (
     <div className="login-bg">
       <div className={`login-container ${openSelect ? "expanded" : ""}`}>
-
         <h2>Register</h2>
 
         <form onSubmit={handleSubmit}>
-
           <input
             name="firstName"
             placeholder="First name"
@@ -75,6 +74,8 @@ export default function Register() {
             onChange={handleChange}
             required
           />
+
+          {/* ROLE SELECT */}
           <div className={`custom-select ${openSelect ? "open" : ""}`}>
             <div
               className="custom-select-header"
@@ -90,9 +91,7 @@ export default function Register() {
           </div>
 
           <button type="submit">Register</button>
-
         </form>
-
       </div>
     </div>
   );

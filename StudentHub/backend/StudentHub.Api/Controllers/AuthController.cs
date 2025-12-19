@@ -31,7 +31,7 @@ namespace StudentHub.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -48,13 +48,12 @@ namespace StudentHub.Api.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
-
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
             await _userManager.AddToRoleAsync(user, dto.Role);
 
-            return Ok("User registered");
+            return Ok();
         }
 
         [HttpPost("login")]
