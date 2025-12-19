@@ -75,8 +75,6 @@ export default function Register() {
             onChange={handleChange}
             required
           />
-
-          {/* ---- CUSTOM SELECT ---- */}
           <div className={`custom-select ${openSelect ? "open" : ""}`}>
             <div
               className="custom-select-header"

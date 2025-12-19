@@ -7,7 +7,7 @@
     background: linear-gradient(135deg, #0b1226, #0f172a 45%, #111827);
 }
 
-/* ---- CARD ---- */
+
 .login-container {
     width: min(440px, 100%);
     background: #101a33;
@@ -20,7 +20,7 @@
     transition: height 0.3s ease, padding-bottom 0.3s ease;
 }
 
-/* ---- CENTER TITLE ---- */
+
 .login-container h2 {
     text-align: center;
     margin-bottom: 22px;
@@ -28,7 +28,7 @@
     font-weight: 700;
 }
 
-/* ---- INPUTS ---- */
+
 .login-container input {
     width: 100%;
     padding: 14px;
@@ -47,7 +47,7 @@
     transform: translateY(-1px);
 }
 
-/* ---- BUTTON ---- */
+
 .login-container button {
     width: 100%;
     padding: 14px;
@@ -68,7 +68,6 @@
     filter: brightness(1.15);
 }
 
-/* ---- LINKS ---- */
 .links {
     display: flex;
     flex-direction: column;
@@ -79,10 +78,9 @@
     color: #93c5fd;
     font-size: 14px;
     margin-bottom: 6px;
-    text-align: left; /* ← НЕ по центру */
+    text-align: left; 
 }
 
-/* ---- CUSTOM SELECT ---- */
 .custom-select {
     position: relative;
     margin-bottom: 16px;
@@ -97,14 +95,13 @@
     color: #e5e7eb;
     cursor: pointer;
     transition: 0.15s ease;
-    text-align: center; /* ← Тепер текст по центру */
+    text-align: center; 
 }
 
 .custom-select-header:hover {
     border-color: #38bdf8;
 }
 
-/* Dropdown */
 .custom-select-options {
     margin-top: 6px;
     background: #0b1226;
@@ -123,7 +120,7 @@
 
 .custom-select-options div {
     padding: 14px;
-    text-align: center; /* ← рівні відступи як кнопка */
+    text-align: center; 
     cursor: pointer;
     transition: background 0.2s ease;
 }
