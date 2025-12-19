@@ -3,7 +3,6 @@ import { registerRequest } from "../api/authService";
 import "./styles/Login.css";
 
 export default function Register() {
-
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -11,7 +10,6 @@ export default function Register() {
     password: "",
     role: "Student"
   });
-
   const [openSelect, setOpenSelect] = useState(false);
 
   function handleChange(e) {
@@ -20,13 +18,14 @@ export default function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     const result = await registerRequest(form);
 
     if (result.ok) {
       alert("Registration successful! Now you can login.");
       window.location.href = "/login";
     } else {
-      alert(result.message);
+      alert(result.message || "Registration failed");
     }
   }
 

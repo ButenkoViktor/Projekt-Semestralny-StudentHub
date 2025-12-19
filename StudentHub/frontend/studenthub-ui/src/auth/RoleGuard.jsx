@@ -1,13 +1,12 @@
-import { getRoles } from "../api/authService";
 import { Navigate } from "react-router-dom";
+import { getRoles } from "../api/authService";
 
 export default function RoleGuard({ children, requiredRole }) {
+  const roles = getRoles();
 
-    let roles = getRoles();
+  if (!roles.includes(requiredRole)) {
+    return <Navigate to="/login" />;
+  }
 
-    if (!roles.includes(requiredRole)) {
-        return <Navigate to="/dashboard" />;
-    }
-
-    return children;
+  return children;
 }

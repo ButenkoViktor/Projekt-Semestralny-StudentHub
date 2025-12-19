@@ -1,20 +1,26 @@
-import { useState } from "react";
-import { loginRequest } from "../api/authService";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../auth/AuthContext";
+import { getRoles } from "../api/authService";
 import "./styles/Login.css";
 
 export default function Login() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
 
-    const result = await loginRequest(email, password);
+    try {
+      await login(email, password);
 
-    if (result.success) {
-      window.location.href = "/dashboard";
-    } else {
+      const roles = getRoles();
+      if (roles.includes("Admin")) navigate("/admin");
+      else if (roles.includes("Teacher")) navigate("/teacher");
+      else navigate("/student");
+    } catch {
       alert("Login failed");
     }
   }
