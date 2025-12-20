@@ -7,15 +7,25 @@ import "./styles/Login.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  function validate() {
+    const newErrors = {};
+    if (!email) newErrors.email = "Email is required";
+    if (!password) newErrors.password = "Password is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
   async function handleLogin(e) {
     e.preventDefault();
+    if (!validate()) return;
 
     try {
       await login(email, password);
-
       const roles = getRoles();
       if (roles.includes("Admin")) navigate("/admin");
       else if (roles.includes("Teacher")) navigate("/teacher");
@@ -36,16 +46,24 @@ export default function Login() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
+          {errors.email && <span className="error">{errors.email}</span>}
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <i
+              className={`fa-solid ${
+                showPassword ? "fa-eye-slash" : "fa-eye"
+              }`}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          </div>
+          {errors.password && <span className="error">{errors.password}</span>}
 
           <button type="submit">Log in</button>
         </form>

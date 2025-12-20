@@ -10,11 +10,37 @@ export default function Register() {
     password: "",
     role: "Student"
   });
-
+   const [errors, setErrors] = useState({});
   const [openSelect, setOpenSelect] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function validate() {
+    const newErrors = {};
+
+    if (form.firstName.trim().length < 2)
+      newErrors.firstName = "First name must be at least 2 characters";
+
+    if (form.lastName.trim().length < 2)
+      newErrors.lastName = "Last name must be at least 2 characters";
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      newErrors.email = "Invalid email format";
+
+    if (
+      form.password.length < 8 ||
+      !/[A-Z]/.test(form.password) ||
+      !/[0-9]/.test(form.password)
+    ) {
+      newErrors.password =
+        "Password must be 8+ chars, include uppercase letter and number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   }
 
   function pickRole(role) {
@@ -24,14 +50,16 @@ export default function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!validate()) return;
 
-    const result = await registerRequest(form);
+    const res = await registerRequest(form);
 
-    if (result.success) {
+    if (res.ok) {
       alert("Registration successful!");
       window.location.href = "/login";
     } else {
-      alert(result.message || "Registration failed");
+      const text = await res.text();
+      alert(text || "Registration failed");
     }
   }
 
@@ -48,7 +76,7 @@ export default function Register() {
             onChange={handleChange}
             required
           />
-
+          {errors.firstName && <span className="error">{errors.firstName}</span>}
           <input
             name="lastName"
             placeholder="Last name"
@@ -56,6 +84,7 @@ export default function Register() {
             onChange={handleChange}
             required
           />
+          {errors.lastName && <span className="error">{errors.lastName}</span>}
 
           <input
             type="email"
@@ -65,17 +94,23 @@ export default function Register() {
             onChange={handleChange}
             required
           />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-
-          {/* ROLE SELECT */}
+          {errors.email && <span className="error">{errors.email}</span>}
+           <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+            />
+            <i
+              className={`fa-solid ${
+                showPassword ? "fa-eye-slash" : "fa-eye"
+              }`}
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          </div>
+          {errors.password && <span className="error">{errors.password}</span>}
           <div className={`custom-select ${openSelect ? "open" : ""}`}>
             <div
               className="custom-select-header"
