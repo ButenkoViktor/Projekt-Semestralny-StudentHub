@@ -1,18 +1,20 @@
-﻿namespace StudentHub.Core.Entities.Events
-{
-    public class Event
-    {
-        public int Id { get; set; }
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace StudentHub.Api.Models.Events
+{
+    public class CreateEventDto
+    {
+        [Required]
         public string Title { get; set; } = default!;
+
         public string Description { get; set; } = default!;
 
+        [Required]
         public DateTime StartDate { get; set; }
+
+        [Required]
         public DateTime EndDate { get; set; }
 
         public int? GroupId { get; set; }
-
-        public string CreatedById { get; set; } = default!;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
