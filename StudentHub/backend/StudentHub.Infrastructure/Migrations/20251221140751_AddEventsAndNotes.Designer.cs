@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentHub.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using StudentHub.Infrastructure.Data;
 namespace StudentHub.Infrastructure.Migrations
 {
     [DbContext(typeof(StudentHubDbContext))]
-    partial class StudentHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251221140751_AddEventsAndNotes")]
+    partial class AddEventsAndNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
