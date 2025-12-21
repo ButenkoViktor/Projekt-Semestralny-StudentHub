@@ -18,6 +18,7 @@ using StudentHub.Infrastructure.Data;
 using StudentHub.Infrastructure.Services;
 using System.Text;
 using StudentHub.Api.Services.Events;
+using StudentHub.Api.Services.Notes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +112,7 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<INoteService, NoteService>();
 
 builder.Services.AddSignalR();
 
