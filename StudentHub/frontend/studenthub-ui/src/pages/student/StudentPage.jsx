@@ -1,3 +1,11 @@
+import { Outlet } from "react-router-dom";
+import "./StudentLayout.css";
 export default function StudentPage() {
-    return <h1>Student Page</h1>;
+  return (
+    <div className="student-layout">
+      <main className="student-content">
+        <Outlet />
+      </main>
+    </div>
+  );
 }

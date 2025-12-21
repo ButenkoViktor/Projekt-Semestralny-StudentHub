@@ -6,6 +6,11 @@ import Register from "./pages/Register";
 import AdminPage from "./pages/admin/AdminPage";
 import TeacherPage from "./pages/teacher/TeacherPage";
 import StudentPage from "./pages/student/StudentPage";
+import StudentHome from "./pages/student/StudentHome";
+import StudentCourses from "./pages/student/StudentCourses";
+import StudentTasks from "./pages/student/StudentTasks";
+import StudentSchedule from "./pages/student/StudentSchedule";
+import StudentNotes from "./pages/student/StudentNotes";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import RoleGuard from "./auth/RoleGuard";
@@ -55,7 +60,13 @@ function App() {
               </RoleGuard>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<StudentHome />} />
+          <Route path="courses" element={<StudentCourses />} />
+          <Route path="tasks" element={<StudentTasks />} />
+          <Route path="schedule" element={<StudentSchedule />} />
+          <Route path="notes" element={<StudentNotes />} />
+        </Route>
       </Routes>
     </>
   );
