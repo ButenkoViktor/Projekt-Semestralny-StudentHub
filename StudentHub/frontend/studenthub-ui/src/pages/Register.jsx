@@ -49,19 +49,33 @@ export default function Register() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    if (!validate()) return;
+  e.preventDefault();
+  if (!validate()) return;
 
-    const res = await registerRequest(form);
+  const result = await registerRequest(form);
 
-    if (res.ok) {
-      alert("Registration successful!");
-      window.location.href = "/login";
-    } else {
-      const text = await res.text();
-      alert(text || "Registration failed");
-    }
+  if (result.success) {
+    alert("Registration successful!");
+    window.location.href = "/login";
+  } else {
+    alert(result.message || "Registration failed");
   }
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  if (!validate()) return;
+
+  const result = await registerRequest(form);
+
+  if (result.success) {
+    alert("Registration successful!");
+    window.location.href = "/login";
+  } else {
+    alert(result.message || "Registration failed");
+  }
+}
+
 
   return (
     <div className="login-bg">
