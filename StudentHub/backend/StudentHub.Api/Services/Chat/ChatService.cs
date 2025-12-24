@@ -21,8 +21,8 @@ public class ChatService : IChatService
     {
         return await _userManager.Users
             .Where(u => u.Id != currentUserId &&
-                        (u.Email!.Contains(query) ||
-                         (u.FirstName + " " + u.LastName).Contains(query)))
+                (u.Email!.Contains(query) ||
+                 (u.FirstName + " " + u.LastName).Contains(query)))
             .Select(u => new UserSearchDto
             {
                 Id = u.Id,
@@ -41,11 +41,7 @@ public class ChatService : IChatService
 
         if (room == null)
         {
-            room = new ChatRoom
-            {
-                User1Id = userId,
-                User2Id = targetUserId
-            };
+            room = new ChatRoom { User1Id = userId, User2Id = targetUserId };
             _db.ChatRooms.Add(room);
             await _db.SaveChangesAsync();
         }
@@ -59,11 +55,11 @@ public class ChatService : IChatService
             .Where(r => r.User1Id == userId || r.User2Id == userId)
             .ToListAsync();
 
-        var result = new List<ChatRoomDto>();
+        var list = new List<ChatRoomDto>();
         foreach (var room in rooms)
-            result.Add(await MapRoom(room, userId));
+            list.Add(await MapRoom(room, userId));
 
-        return result;
+        return list;
     }
 
     public async Task<ChatRoomDto?> GetRoomAsync(int roomId, string userId)

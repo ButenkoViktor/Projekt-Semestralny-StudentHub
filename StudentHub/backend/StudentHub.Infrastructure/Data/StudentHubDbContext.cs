@@ -61,16 +61,16 @@ namespace StudentHub.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new AnnouncementConfiguration());
 
             // Chat: Message User relationship
-            modelBuilder.Entity<ChatRoom>()
-                .HasMany(r => r.Messages)
-                .WithOne(m => m.ChatRoom)
-                .HasForeignKey(m => m.ChatRoomId);
-
             modelBuilder.Entity<ChatMessage>()
                 .HasOne(m => m.Sender)
                 .WithMany()
                 .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(m => m.ChatRoom)
+                .WithMany(r => r.Messages)
+                .HasForeignKey(m => m.ChatRoomId);
 
 
             // TaskSubmission -> TaskItem (1:n)
