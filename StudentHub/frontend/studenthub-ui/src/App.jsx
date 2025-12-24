@@ -1,4 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { useState } from "react";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -23,9 +25,15 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import RoleGuard from "./auth/RoleGuard";
 import Navbar from "./components/Navbar";
 
+import ChatButton from "./chat/ChatButton";
+import ChatWindow from "./chat/ChatWindow";
+
 function App() {
   const location = useLocation();
+  const [chatOpen, setChatOpen] = useState(false);
+
   const hideNavbar = ["/", "/login", "/register"].includes(location.pathname);
+  const hideChat = ["/", "/login", "/register"].includes(location.pathname);
 
   return (
     <>
@@ -48,21 +56,21 @@ function App() {
         />
 
         <Route
-  path="/teacher"
-  element={
-    <ProtectedRoute>
-      <RoleGuard requiredRole="Teacher">
-        <TeacherPage />
-      </RoleGuard>
-    </ProtectedRoute>
-  }
->
-  <Route index element={<TeacherHome />} />
-  <Route path="courses" element={<TeacherCourses />} />
-  <Route path="groups" element={<TeacherGroups />} />
-  <Route path="tasks" element={<TeacherTasks />} />
-  <Route path="schedule" element={<TeacherSchedule />} />
-</Route>
+          path="/teacher"
+          element={
+            <ProtectedRoute>
+              <RoleGuard requiredRole="Teacher">
+                <TeacherPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<TeacherHome />} />
+          <Route path="courses" element={<TeacherCourses />} />
+          <Route path="groups" element={<TeacherGroups />} />
+          <Route path="tasks" element={<TeacherTasks />} />
+          <Route path="schedule" element={<TeacherSchedule />} />
+        </Route>
 
         <Route
           path="/student"
@@ -81,6 +89,13 @@ function App() {
           <Route path="notes" element={<StudentNotes />} />
         </Route>
       </Routes>
+
+      {!hideChat && (
+        <>
+          {chatOpen && <ChatWindow onClose={() => setChatOpen(false)} />}
+          <ChatButton onClick={() => setChatOpen(o => !o)} />
+        </>
+      )}
     </>
   );
 }

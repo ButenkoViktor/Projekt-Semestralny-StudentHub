@@ -29,9 +29,9 @@ public class ChatController : ControllerBase
         return room == null ? NotFound() : Ok(room);
     }
 
-    [HttpPost("room/{targetUserId}")]
-    public async Task<IActionResult> CreateRoom(string targetUserId)
-        => Ok(await _service.CreateOrGetRoomAsync(UserId, targetUserId));
+    [HttpPost("room")]
+    public async Task<IActionResult> CreateRoom(CreateOrGetRoomRequest req)
+    => Ok(await _service.CreateOrGetRoomAsync(UserId, req.TargetUserId));
 
     [HttpPost("send")]
     public async Task<IActionResult> Send(SendMessageRequest req)
