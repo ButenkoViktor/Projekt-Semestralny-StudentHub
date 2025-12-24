@@ -17,23 +17,11 @@ namespace StudentHub.Core.Entities.Chat
         /// Gets or sets the chat room associated with this message.
         /// </summary>
         public ChatRoom ChatRoom { get; set; } = default!;
-        /// <summary>
-        /// Gets or sets the unique identifier for the user associated with this instance. Foreign key referencing the User entity.
-        /// </summary>
-        public string UserId { get; set; } = default!;
 
-        /// <summary>
-        /// Gets or sets the user associated with the current application context.
-        /// </summary>
-        public ApplicationUser User { get; set; } = default!;
+        public string SenderId { get; set; } = default!;
+        public ApplicationUser Sender { get; set; } = default!;
 
-        /// <summary>
-        /// Gets or sets the textual content associated with this instance.
-        /// </summary>
         public string Content { get; set; } = default!;
-        /// <summary>
-        /// Gets or sets the date and time, in UTC, when the message was sent.
-        /// </summary>
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
     }
 }

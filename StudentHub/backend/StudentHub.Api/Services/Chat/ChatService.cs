@@ -1,100 +1,125 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StudentHub.Api.Models.Chat;
-using StudentHub.Api.Hubs;
+using StudentHub.Api.Services.Chat;
 using StudentHub.Core.Entities.Chat;
+using StudentHub.Core.Entities.Identity;
 using StudentHub.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace StudentHub.Api.Services.Chat
+public class ChatService : IChatService
 {
-    public class ChatService : IChatService
+    private readonly StudentHubDbContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public ChatService(StudentHubDbContext db, UserManager<ApplicationUser> userManager)
     {
-        private readonly StudentHubDbContext _context;
-        private readonly IHubContext<ChatHub> _hub;
+        _db = db;
+        _userManager = userManager;
+    }
 
-        public ChatService(StudentHubDbContext context, IHubContext<ChatHub> hub)
-        {
-            _context = context;
-            _hub = hub;
-        }
-
-        public async Task<IEnumerable<ChatRoomDto>> GetRoomsAsync(string userId)
-        {
-            return await _context.ChatParticipants
-                .Where(cp => cp.UserId == userId)
-                .Select(cp => new ChatRoomDto
-                {
-                    Id = cp.ChatRoomId,
-                    Name = cp.ChatRoom.Name
-                })
-                .ToListAsync();
-        }
-
-        public async Task<ChatRoomDto?> GetRoomAsync(int roomId)
-        {
-            var room = await _context.ChatRooms
-                .Include(r => r.Messages)
-                .ThenInclude(m => m.User)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-
-            if (room == null) return null;
-
-            var messages = room.Messages?
-                .OrderBy(m => m.SentAt)
-                .Select(m => new ChatMessageDto
-                {
-                    Id = m.Id,
-                    RoomId = m.ChatRoomId,
-                    UserId = m.UserId,
-                    UserName = $"{m.User.FirstName} {m.User.LastName}",
-                    Content = m.Content,
-                    SentAt = m.SentAt
-                });
-
-            return new ChatRoomDto
+    public async Task<IEnumerable<UserSearchDto>> SearchUsersAsync(string query, string currentUserId)
+    {
+        return await _userManager.Users
+            .Where(u => u.Id != currentUserId &&
+                        (u.Email!.Contains(query) ||
+                         (u.FirstName + " " + u.LastName).Contains(query)))
+            .Select(u => new UserSearchDto
             {
-                Id = room.Id,
-                Name = room.Name,
-                Messages = messages
-            };
-        }
+                Id = u.Id,
+                Email = u.Email!,
+                FullName = u.FirstName + " " + u.LastName
+            })
+            .Take(10)
+            .ToListAsync();
+    }
 
-        public async Task<ChatMessageDto> SendMessageAsync(string userId, SendMessageRequest request)
+    public async Task<ChatRoomDto> CreateOrGetRoomAsync(string userId, string targetUserId)
+    {
+        var room = await _db.ChatRooms.FirstOrDefaultAsync(r =>
+            (r.User1Id == userId && r.User2Id == targetUserId) ||
+            (r.User1Id == targetUserId && r.User2Id == userId));
+
+        if (room == null)
         {
-            // зберігаємо в БД
-            var message = new ChatMessage
+            room = new ChatRoom
             {
-                ChatRoomId = request.RoomId,
-                UserId = userId,
-                Content = request.Content,
-                SentAt = DateTime.UtcNow
+                User1Id = userId,
+                User2Id = targetUserId
             };
-
-            _context.ChatMessages.Add(message);
-            await _context.SaveChangesAsync();
-
-            // отримаємо дані користувача для імені
-            var user = await _context.Users.FindAsync(userId);
-            var userName = user != null ? $"{user.FirstName} {user.LastName}" : userId;
-
-            var dto = new ChatMessageDto
-            {
-                Id = message.Id,
-                RoomId = message.ChatRoomId,
-                UserId = userId,
-                UserName = userName,
-                Content = message.Content,
-                SentAt = message.SentAt
-            };
-
-            await _hub.Clients.Group(request.RoomId.ToString())
-                .SendAsync("ReceiveMessage", dto);
-
-            return dto;
+            _db.ChatRooms.Add(room);
+            await _db.SaveChangesAsync();
         }
+
+        return await MapRoom(room, userId);
+    }
+
+    public async Task<IEnumerable<ChatRoomDto>> GetRoomsAsync(string userId)
+    {
+        var rooms = await _db.ChatRooms
+            .Where(r => r.User1Id == userId || r.User2Id == userId)
+            .ToListAsync();
+
+        var result = new List<ChatRoomDto>();
+        foreach (var room in rooms)
+            result.Add(await MapRoom(room, userId));
+
+        return result;
+    }
+
+    public async Task<ChatRoomDto?> GetRoomAsync(int roomId, string userId)
+    {
+        var room = await _db.ChatRooms
+            .Include(r => r.Messages)
+            .FirstOrDefaultAsync(r => r.Id == roomId);
+
+        if (room == null) return null;
+        if (room.User1Id != userId && room.User2Id != userId) return null;
+
+        return await MapRoom(room, userId, true);
+    }
+
+    public async Task<ChatMessageDto> SendMessageAsync(string userId, SendMessageRequest request)
+    {
+        var message = new ChatMessage
+        {
+            ChatRoomId = request.RoomId,
+            SenderId = userId,
+            Content = request.Content
+        };
+
+        _db.ChatMessages.Add(message);
+        await _db.SaveChangesAsync();
+
+        return new ChatMessageDto
+        {
+            Id = message.Id,
+            SenderId = userId,
+            Content = message.Content,
+            SentAt = message.SentAt
+        };
+    }
+
+    private async Task<ChatRoomDto> MapRoom(ChatRoom room, string currentUserId, bool withMessages = false)
+    {
+        var otherId = room.User1Id == currentUserId ? room.User2Id : room.User1Id;
+        var user = await _userManager.FindByIdAsync(otherId);
+
+        return new ChatRoomDto
+        {
+            Id = room.Id,
+            OtherUserId = otherId,
+            OtherUserName = $"{user!.FirstName} {user.LastName}",
+            Messages = withMessages
+                ? room.Messages
+                    .OrderBy(m => m.SentAt)
+                    .Select(m => new ChatMessageDto
+                    {
+                        Id = m.Id,
+                        SenderId = m.SenderId,
+                        Content = m.Content,
+                        SentAt = m.SentAt
+                    })
+                : null
+        };
     }
 }

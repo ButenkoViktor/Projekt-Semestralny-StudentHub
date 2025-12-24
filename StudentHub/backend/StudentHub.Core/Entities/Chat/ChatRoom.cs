@@ -7,21 +7,20 @@ namespace StudentHub.Core.Entities.Chat
         /// Primary key of the chat room.
         /// </summary>
         public int Id { get; set; }
+     
         /// <summary>
-        /// Gets or sets the name associated with the object.
+        /// Gets or sets the unique identifier of the first user in the relationship.
         /// </summary>
-        public string Name { get; set; } = default!;
+        public string User1Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of participants associated with this chat room.
+        /// Gets or sets the unique identifier of the second user associated with the entity.
         /// </summary>
-        public ICollection<ChatParticipant>? Participants { get; set; }
+        public string User2Id { get; set; }
+
         /// <summary>
-        /// Gets or sets the collection of chat messages associated with the conversation.
+        /// Gets or sets the collection of chat messages associated with the chat session.
         /// </summary>
-        /// <remarks>The collection may be null if no messages have been loaded or assigned. Modifying the
-        /// collection does not automatically persist changes; ensure that updates are saved as appropriate for the
-        /// application's data model.</remarks>
-        public ICollection<ChatMessage>? Messages { get; set; }
+        public ICollection<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
     }
 }

@@ -33,9 +33,15 @@ namespace StudentHub.Core.Entities.Identity
         /// Gets or sets the group associated with this instance.
         /// </summary>
         public Group? Group { get; set; }
-        public ICollection<ChatMessage>? Messages { get; set; }
-        public ICollection<ChatParticipant>? ChatParticipants { get; set; }
 
+        /// <summary>
+        /// Gets or sets the collection of chat messages associated with the chat session.
+        /// </summary>
+        public ICollection<ChatMessage>? Messages { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of announcements associated with this entity.
+        /// </summary>
         public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
     }
 }

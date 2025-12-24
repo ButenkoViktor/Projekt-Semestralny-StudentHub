@@ -25,10 +25,12 @@ namespace StudentHub.Infrastructure.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<Course> Courses { get; set; }
 
+        // Announcements
         public DbSet<Announcement> Announcements { get; set; }
-        public DbSet<ChatParticipant> ChatParticipants { get; set; }
-        public DbSet<ChatMessage> ChatMessages { get; set; }
-        public DbSet<ChatRoom> ChatRooms { get; set; }
+
+        // Chat
+        public DbSet<ChatRoom> ChatRooms => Set<ChatRoom>();
+        public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
         // Events
         public DbSet<Event> Events { get; set; }
@@ -59,27 +61,16 @@ namespace StudentHub.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new AnnouncementConfiguration());
 
             // Chat: Message User relationship
+            modelBuilder.Entity<ChatRoom>()
+                .HasMany(r => r.Messages)
+                .WithOne(m => m.ChatRoom)
+                .HasForeignKey(m => m.ChatRoomId);
+
             modelBuilder.Entity<ChatMessage>()
-                .HasOne(m => m.User)
-                .WithMany(u => u.Messages)
-                .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // ChatParticipant: composite key
-            modelBuilder.Entity<ChatParticipant>()
-                .HasKey(cp => new { cp.ChatRoomId, cp.UserId });
-
-            modelBuilder.Entity<ChatParticipant>()
-                .HasOne(cp => cp.ChatRoom)
-                .WithMany(cr => cr.Participants)
-                .HasForeignKey(cp => cp.ChatRoomId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ChatParticipant>()
-                .HasOne(cp => cp.User)
-                .WithMany(u => u.ChatParticipants)
-                .HasForeignKey(cp => cp.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             // TaskSubmission -> TaskItem (1:n)
