@@ -1,3 +1,9 @@
-export default function TeacherPage(){
-    return <h1>Teacher Page</h1>;
+import { Outlet } from "react-router-dom";
+
+export default function TeacherPage() {
+  return (
+    <div className="teacher-page">
+      <Outlet />
+    </div>
+  );
 }

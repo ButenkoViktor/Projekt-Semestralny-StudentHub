@@ -1,0 +1,52 @@
+.teacher-page {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #f8fafc;
+  min-height: calc(100vh - 64px);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.teacher-loading {
+  padding: 60px;
+  text-align: center;
+  font-size: 16px;
+  color: #475569;
+}
+
+.teacher-error {
+  padding: 32px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.course-card {
+  grid-column: span 4;
+}
+
+.course-desc {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .course-card {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 700px) {
+  .course-card {
+    grid-column: span 12;
+  }
+}

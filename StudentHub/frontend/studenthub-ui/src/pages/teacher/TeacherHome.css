@@ -1,0 +1,106 @@
+.teacher-home {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #f8fafc;
+  min-height: calc(100vh - 64px);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.teacher-loading {
+  padding: 60px;
+  text-align: center;
+  font-size: 16px;
+  color: #475569;
+}
+
+.welcome-card {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  padding: 28px 32px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+}
+
+.welcome-card h1 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.welcome-card span {
+  color: #bfdbfe;
+}
+
+.welcome-card p {
+  margin-top: 8px;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.dashboard-card {
+  grid-column: span 4;
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.dashboard-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.dashboard-card.highlight {
+  border: 2px solid #2563eb;
+}
+
+.simple-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.simple-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.simple-list li:last-child {
+  border-bottom: none;
+}
+
+.simple-list strong {
+  color: #1e293b;
+}
+
+.simple-list span {
+  color: #64748b;
+}
+
+.empty {
+  font-size: 14px;
+  color: #64748b;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-card {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-card {
+    grid-column: span 12;
+  }
+}

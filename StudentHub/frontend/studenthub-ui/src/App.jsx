@@ -6,11 +6,18 @@ import Register from "./pages/Register";
 import AdminPage from "./pages/admin/AdminPage";
 import TeacherPage from "./pages/teacher/TeacherPage";
 import StudentPage from "./pages/student/StudentPage";
+
 import StudentHome from "./pages/student/StudentHome";
 import StudentCourses from "./pages/student/StudentCourses";
 import StudentTasks from "./pages/student/StudentTasks";
 import StudentSchedule from "./pages/student/StudentSchedule";
 import StudentNotes from "./pages/student/StudentNotes";
+
+import TeacherHome from "./pages/teacher/TeacherHome";
+import TeacherCourses from "./pages/teacher/TeacherCourses";
+import TeacherGroups from "./pages/teacher/TeacherGroups";
+import TeacherTasks from "./pages/teacher/TeacherTasks";
+import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import RoleGuard from "./auth/RoleGuard";
@@ -41,15 +48,21 @@ function App() {
         />
 
         <Route
-          path="/teacher"
-          element={
-            <ProtectedRoute>
-              <RoleGuard requiredRole="Teacher">
-                <TeacherPage />
-              </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+  path="/teacher"
+  element={
+    <ProtectedRoute>
+      <RoleGuard requiredRole="Teacher">
+        <TeacherPage />
+      </RoleGuard>
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<TeacherHome />} />
+  <Route path="courses" element={<TeacherCourses />} />
+  <Route path="groups" element={<TeacherGroups />} />
+  <Route path="tasks" element={<TeacherTasks />} />
+  <Route path="schedule" element={<TeacherSchedule />} />
+</Route>
 
         <Route
           path="/student"
