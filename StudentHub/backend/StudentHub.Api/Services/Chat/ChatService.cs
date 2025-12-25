@@ -5,7 +5,7 @@ using StudentHub.Api.Services.Chat;
 using StudentHub.Core.Entities.Chat;
 using StudentHub.Core.Entities.Identity;
 using StudentHub.Infrastructure.Data;
-
+using StudentHub.Api.Hubs;
 public class ChatService : IChatService
 {
     private readonly StudentHubDbContext _db;
@@ -20,14 +20,16 @@ public class ChatService : IChatService
     public async Task<IEnumerable<UserSearchDto>> SearchUsersAsync(string query, string currentUserId)
     {
         return await _userManager.Users
-            .Where(u => u.Id != currentUserId &&
+            .Where(u =>
+                u.Id != currentUserId &&
                 (u.Email!.Contains(query) ||
                  (u.FirstName + " " + u.LastName).Contains(query)))
             .Select(u => new UserSearchDto
             {
                 Id = u.Id,
                 Email = u.Email!,
-                FullName = u.FirstName + " " + u.LastName
+                FullName = u.FirstName + " " + u.LastName,
+                IsOnline = PresenceHub.OnlineUsers.ContainsKey(u.Id)
             })
             .Take(10)
             .ToListAsync();
@@ -95,9 +97,15 @@ public class ChatService : IChatService
         };
     }
 
-    private async Task<ChatRoomDto> MapRoom(ChatRoom room, string currentUserId, bool withMessages = false)
+    private async Task<ChatRoomDto> MapRoom(
+    ChatRoom room,
+    string currentUserId,
+    bool withMessages = false)
     {
-        var otherId = room.User1Id == currentUserId ? room.User2Id : room.User1Id;
+        var otherId = room.User1Id == currentUserId
+            ? room.User2Id
+            : room.User1Id;
+
         var user = await _userManager.FindByIdAsync(otherId);
 
         return new ChatRoomDto
@@ -105,6 +113,7 @@ public class ChatService : IChatService
             Id = room.Id,
             OtherUserId = otherId,
             OtherUserName = $"{user!.FirstName} {user.LastName}",
+            IsOnline = PresenceHub.OnlineUsers.ContainsKey(otherId),
             Messages = withMessages
                 ? room.Messages
                     .OrderBy(m => m.SentAt)

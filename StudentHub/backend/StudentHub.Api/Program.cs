@@ -13,12 +13,13 @@ using StudentHub.API.Services.Courses;
 using StudentHub.API.Services.Groups;
 using StudentHub.Api.Services.Tasks;
 using StudentHub.Api.Services.Files;
+using StudentHub.Api.Services.Events;
+using StudentHub.Api.Services.Notes;
 using StudentHub.Core.Entities.Identity;
 using StudentHub.Infrastructure.Data;
 using StudentHub.Infrastructure.Services;
 using System.Text;
-using StudentHub.Api.Services.Events;
-using StudentHub.Api.Services.Notes;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,11 +45,14 @@ builder.Services.AddDbContext<StudentHubDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReact",
-        policy => policy
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyOrigin());
+            .AllowCredentials();
+    });
 });
 
 //  IDENTITY
@@ -128,7 +132,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors("AllowReact");
+app.UseCors("CorsPolicy");
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -140,6 +144,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<ChatHub>("/chat-hub");
 app.MapHub<NotificationHub>("/notifications-hub");
+app.MapHub<PresenceHub>("/hubs/presence");
 
 
 //  SEED DATA

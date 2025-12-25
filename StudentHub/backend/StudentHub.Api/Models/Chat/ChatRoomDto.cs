@@ -6,5 +6,6 @@
         public string OtherUserId { get; set; } = default!;
         public string OtherUserName { get; set; } = default!;
         public IEnumerable<ChatMessageDto>? Messages { get; set; }
+        public bool IsOnline { get; set; }
     }
 }

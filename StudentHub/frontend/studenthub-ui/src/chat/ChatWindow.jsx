@@ -11,8 +11,8 @@ export default function ChatWindow({ onClose }) {
       {!activeRoom ? (
         <>
           <div className="chat-header">
-            <span>Chats</span>
-            <button onClick={onClose}>✖</button>
+            <span className="chat-header-title">Chats</span>
+            <button className="btn-close" onClick={onClose}>✖</button>
           </div>
           <ChatSidebar onSelectRoom={setActiveRoom} />
         </>
