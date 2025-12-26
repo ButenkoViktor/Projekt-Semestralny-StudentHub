@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 namespace StudentHub.Api.Hubs
 {
     [Authorize]
-    [Authorize]
     public class ChatHub : Hub
     {
         public async Task JoinRoom(int roomId)

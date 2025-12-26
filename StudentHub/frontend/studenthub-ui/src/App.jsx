@@ -31,7 +31,7 @@ import ChatWindow from "./chat/ChatWindow";
 function App() {
   const location = useLocation();
   const [chatOpen, setChatOpen] = useState(false);
-
+  const [unreadCount, setUnreadCount] = useState(0);
   const hideNavbar = ["/", "/login", "/register"].includes(location.pathname);
   const hideChat = ["/", "/login", "/register"].includes(location.pathname);
 
@@ -93,7 +93,10 @@ function App() {
       {!hideChat && (
         <>
           {chatOpen && <ChatWindow onClose={() => setChatOpen(false)} />}
-          <ChatButton onClick={() => setChatOpen(o => !o)} />
+          <ChatButton
+          onClick={() => {setUnreadCount(0); setChatOpen(true); }}
+            unreadCount={unreadCount}
+          />
         </>
       )}
     </>
