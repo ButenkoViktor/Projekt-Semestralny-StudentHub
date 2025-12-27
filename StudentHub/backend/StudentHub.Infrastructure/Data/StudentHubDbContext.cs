@@ -98,6 +98,21 @@ namespace StudentHub.Infrastructure.Data
 
             modelBuilder.Entity<TaskItem>()
                 .HasIndex(t => t.Deadline);
+
+            modelBuilder.Entity<TeacherCourseGroup>()
+                .HasOne(x => x.Group)
+                .WithMany()
+                .HasForeignKey(x => x.GroupId);
+
+            modelBuilder.Entity<TeacherCourseGroup>()
+                .HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId);
+
+            modelBuilder.Entity<TeacherCourseGroup>()
+                .HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId);
         }
     }
 }

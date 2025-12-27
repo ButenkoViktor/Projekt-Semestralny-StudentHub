@@ -122,6 +122,7 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<INoteService, NoteService>();
+builder.Services.AddScoped<ITeacherGroupService, TeacherGroupService>();
 
 builder.Services.AddSignalR();
 

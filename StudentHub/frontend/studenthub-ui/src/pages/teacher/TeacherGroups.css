@@ -1,0 +1,108 @@
+.teacher-page {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.teacher-page h1 {
+  font-size: 28px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.group-list {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.group-list button {
+  background: #f8f9fb;
+  border: 1px solid #e0e4ea;
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 220px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.group-list button strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.group-list button span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.group-list button:hover {
+  background: #eef2ff;
+  border-color: #6366f1;
+}
+
+.group-list button.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.group-list button.active span {
+  color: #e0e7ff;
+}
+
+.group-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.group-section h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.students-table th {
+  text-align: left;
+  font-weight: 600;
+  padding: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.students-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.students-table select {
+  padding: 6px 8px;
+}
+
+.students-table button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.students-table button:hover {
+  background: #16a34a;
+}
+
+
+.final-grade {
+  margin-top: 12px;
+  font-size: 16px;
+}

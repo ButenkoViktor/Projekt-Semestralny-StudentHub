@@ -19,11 +19,14 @@ namespace StudentHub.Api.Services.Groups
         public async Task<IEnumerable<GroupForTeacherDto>> GetMyGroupsAsync(string teacherId)
         {
             return await _context.TeacherCourseGroups
+                .Include(x => x.Group)
+                .Include(x => x.Course)
                 .Where(x => x.TeacherId == teacherId)
                 .Select(x => new GroupForTeacherDto
                 {
                     GroupId = x.GroupId,
                     GroupName = x.Group.Name,
+                    CourseId = x.CourseId,         
                     CourseTitle = x.Course.Title
                 })
                 .ToListAsync();
