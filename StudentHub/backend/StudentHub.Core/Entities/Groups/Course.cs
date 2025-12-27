@@ -25,6 +25,11 @@ namespace StudentHub.Core.Entities.Groups
         /// Gets or sets an optional textual description associated with the object.
         /// </summary>
         public string? Description { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the unique identifier of the teacher associated with this entity.
+        /// </summary>
+        public string TeacherId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the collection of schedule items associated with the current instance.
