@@ -10,6 +10,7 @@ using StudentHub.Core.Entities.Notes;
 using StudentHub.Core.Entities.Notifications;
 using StudentHub.Core.Entities.Schedule;
 using StudentHub.Core.Entities.Tasks;
+using StudentHub.Core.Entities.Grades;
 using StudentHub.Infrastructure.Configurations;
 
 namespace StudentHub.Infrastructure.Data
@@ -46,6 +47,8 @@ namespace StudentHub.Infrastructure.Data
         public DbSet<TaskAttachment> TaskAttachments { get; set; }
         public DbSet<TaskSubmission> TaskSubmissions { get; set; }
         public DbSet<TaskSubmissionFile> TaskSubmissionFiles { get; set; }
+        public DbSet<TeacherCourseGroup> TeacherCourseGroups => Set<TeacherCourseGroup>();
+        public DbSet<StudentGrade> StudentGrades => Set<StudentGrade>();
 
         // Schedule
         public DbSet<ScheduleItem> ScheduleItems { get; set; }

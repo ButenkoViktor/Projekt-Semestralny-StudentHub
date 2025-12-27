@@ -35,7 +35,6 @@ namespace StudentHub.API.Controllers
             return Forbid();
         }
 
-        // ✅ ДЛЯ STUDENT / TEACHER
         [HttpGet("my")]
         public async Task<IActionResult> GetMyCourses()
         {
