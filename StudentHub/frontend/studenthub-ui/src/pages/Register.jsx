@@ -81,7 +81,6 @@ async function handleSubmit(e) {
     <div className="login-bg">
       <div className={`login-container ${openSelect ? "expanded" : ""}`}>
         <h2>Register</h2>
-
         <form onSubmit={handleSubmit}>
           <input
             name="firstName"
@@ -140,6 +139,13 @@ async function handleSubmit(e) {
           </div>
 
           <button type="submit">Register</button>
+          <div className="login-divider"></div>
+          <div className="login-help">
+          Can't register? Send an email to{" "}
+          <a href="mailto:studenthub.pl.help@gmail.com">
+            studenthub.pl.help@gmail.com
+          </a>
+        </div>
         </form>
       </div>
     </div>

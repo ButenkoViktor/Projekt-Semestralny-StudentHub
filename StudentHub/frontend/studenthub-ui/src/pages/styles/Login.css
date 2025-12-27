@@ -83,6 +83,60 @@
   margin: 6px 0 10px 4px;
 }
 
+.remember-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.remember-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+}
+
+.remember-checkbox input {
+  display: none;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #0b1226;
+  border: 1px solid #334155;
+  position: relative;
+}
+
+.remember-checkbox input:checked + .checkmark {
+  background: #7c3aed;
+  border-color: #7c3aed;
+}
+
+.remember-checkbox input:checked + .checkmark::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 13px;
+  left: 4px;
+  top: -1px;
+}
+
+.forgot-link {
+  font-size: 14px;
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
 .login-container button {
   width: 100%;
   height: 48px;
@@ -101,6 +155,28 @@
 .login-container button:hover {
   box-shadow: 0 16px 35px rgba(244, 63, 94, 0.42);
   filter: brightness(1.15);
+}
+
+.login-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 24px 0;
+}
+
+.login-help {
+  font-size: 13px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.login-help a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.login-help a:hover {
+  text-decoration: underline;
 }
 
 .links {
