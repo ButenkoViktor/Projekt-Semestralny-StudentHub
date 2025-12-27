@@ -57,63 +57,66 @@ export default function TeacherHome() {
       </section>
 
       <div className="dashboard-grid">
-
-        <section className="dashboard-card">
-          <h2>My Courses</h2>
-          {courses.length === 0 ? (
-            <p className="empty">No assigned courses</p>
-          ) : (
-            <ul className="simple-list">
-              {courses.map(c => (
-                <li key={c.id}>
-                  <strong>{c.title}</strong>
-                  <span>{c.groupName}</span>
-                </li>
-              ))}
-            </ul>
+        <DashboardCard
+          title="My Courses"
+          emptyText="No assigned courses"
+          items={courses}
+          renderItem={c => (
+            <>
+              <strong>{c.title}</strong>
+              <span>{c.groupName}</span>
+            </>
           )}
-        </section>
+        />
 
-        <section className="dashboard-card highlight">
-          <h2>Active Tasks</h2>
-          {tasks.length === 0 ? (
-            <p className="empty">No active tasks</p>
-          ) : (
-            <ul className="simple-list">
-              {tasks.slice(0, 5).map(t => (
-                <li key={t.id}>
-                  <strong>{t.title}</strong>
-                  <span>
-                    {new Date(t.deadline).toLocaleDateString()}
-                  </span>
-                </li>
-              ))}
-            </ul>
+        <DashboardCard
+          title="Active Tasks"
+          highlight
+          emptyText="No active tasks"
+          items={tasks.slice(0, 5)}
+          renderItem={t => (
+            <>
+              <strong>{t.title}</strong>
+              <span>{new Date(t.deadline).toLocaleDateString()}</span>
+            </>
           )}
-        </section>
+        />
 
-        <section className="dashboard-card">
-          <h2>Upcoming Lessons</h2>
-          {schedule.length === 0 ? (
-            <p className="empty">No lessons planned</p>
-          ) : (
-            <ul className="simple-list">
-              {schedule.slice(0, 5).map(s => (
-                <li key={s.id}>
-                  <strong>{s.courseTitle}</strong>
-                  <span>
-                    {new Date(s.startTime).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}
-                  </span>
-                </li>
-              ))}
-            </ul>
+        <DashboardCard
+          title="Upcoming Lessons"
+          emptyText="No lessons planned"
+          items={schedule.slice(0, 5)}
+          renderItem={s => (
+            <>
+              <strong>{s.courseTitle}</strong>
+              <span>
+                {new Date(s.startTime).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit"
+                })}
+              </span>
+            </>
           )}
-        </section>
-
+        />
       </div>
     </div>
+  );
+}
+
+function DashboardCard({ title, items, emptyText, renderItem, highlight }) {
+  return (
+    <section className={`dashboard-card ${highlight ? "highlight" : ""}`}>
+      <h2>{title}</h2>
+
+      {items.length === 0 ? (
+        <p className="empty">{emptyText}</p>
+      ) : (
+        <ul className="simple-list">
+          {items.map((item, i) => (
+            <li key={item.id || i}>{renderItem(item)}</li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }

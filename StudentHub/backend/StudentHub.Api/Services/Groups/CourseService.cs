@@ -27,7 +27,10 @@ namespace StudentHub.API.Services.Courses
                 .Where(c => c.TeacherId == teacherId)
                 .ToListAsync();
         }
-
+        public async Task<IEnumerable<Course>> GetByStudentIdAsync(string studentId)
+        {
+            return await Task.FromResult(Enumerable.Empty<Course>());
+        }
         public async Task<bool> TeacherHasAccessAsync(string teacherId, int courseId)
         {
             return await _context.Courses

@@ -9,8 +9,8 @@ function authHeaders() {
   };
 }
 
-export async function getAllCourses() {
-  const res = await fetch(`${API_URL}/Courses`, {
+export async function getMyCourses() {
+  const res = await fetch(`${API_URL}/Courses/my`, {
     headers: authHeaders()
   });
 

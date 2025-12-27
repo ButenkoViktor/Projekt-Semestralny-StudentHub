@@ -25,56 +25,48 @@ namespace StudentHub.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            var isTeacher = User.IsInRole("Teacher");
 
-            if (isAdmin)
-            {
-               
-                var courses = await _service.GetAllAsync();
-                return Ok(courses);
-            }
+            if (User.IsInRole("Admin"))
+                return Ok(await _service.GetAllAsync());
 
-            if (isTeacher)
-            {
-              
-                var courses = await _service.GetByTeacherIdAsync(userId);
-                return Ok(courses);
-            }
+            if (User.IsInRole("Teacher"))
+                return Ok(await _service.GetByTeacherIdAsync(userId));
 
             return Forbid();
         }
 
+        // ✅ ДЛЯ STUDENT / TEACHER
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyCourses()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (User.IsInRole("Teacher"))
+                return Ok(await _service.GetByTeacherIdAsync(userId));
+
+            if (User.IsInRole("Student"))
+                return Ok(await _service.GetByStudentIdAsync(userId));
+
+            return Forbid();
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            var isTeacher = User.IsInRole("Teacher");
 
-            var course = await _service.GetByIdAsync(id);
-            if (course == null)
-                return NotFound();
+            if (User.IsInRole("Admin"))
+                return Ok(await _service.GetByIdAsync(id));
 
-            if (isAdmin)
-                return Ok(course);
-
-            if (isTeacher)
-            {
-                var hasAccess = await _service.TeacherHasAccessAsync(userId, id);
-                if (!hasAccess)
-                    return Forbid();
-
-                return Ok(course);
-            }
+            if (User.IsInRole("Teacher") &&
+                await _service.TeacherHasAccessAsync(userId, id))
+                return Ok(await _service.GetByIdAsync(id));
 
             return Forbid();
         }
 
-
-        [HttpPost]
         [Authorize(Roles = "Admin")]
+        [HttpPost]
         public async Task<IActionResult> Create(CreateCourseDto dto)
         {
             var course = new Course
@@ -83,25 +75,7 @@ namespace StudentHub.API.Controllers
                 Description = dto.Description
             };
 
-            var created = await _service.CreateAsync(course);
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, UpdateCourseDto dto)
-        {
-            var updated = new Course
-            {
-                Title = dto.Title,
-                Description = dto.Description
-            };
-
-            var result = await _service.UpdateAsync(id, updated);
-            if (result == null)
-                return NotFound();
-
-            return Ok(result);
+            return Ok(await _service.CreateAsync(course));
         }
 
         [HttpDelete("{id}")]
