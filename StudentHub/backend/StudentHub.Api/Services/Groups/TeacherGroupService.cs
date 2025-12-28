@@ -126,5 +126,29 @@ namespace StudentHub.Api.Services.Groups
 
             return grades;
         }
+        public async Task<IEnumerable<StudentGradeDto>> GetGradesHistoryAsync(string teacherId, int groupId, int courseId)
+        {
+            var hasAccess = await _context.TeacherCourseGroups.AnyAsync(x =>
+                x.TeacherId == teacherId &&
+                x.GroupId == groupId &&
+                x.CourseId == courseId);
+
+            if (!hasAccess)
+                throw new UnauthorizedAccessException();
+
+            return await _context.StudentGrades
+                .Where(g =>
+                    g.CourseId == courseId &&
+                    g.GroupId == groupId)
+                .Select(g => new StudentGradeDto
+                {
+                    StudentId = g.StudentId,
+                    StudentName = g.Student.FirstName + " " + g.Student.LastName,
+                    Date = g.Date,
+                    IsPresent = g.IsPresent,
+                    Grade = g.Grade
+                })
+                .ToListAsync();
+        }
     }
 }

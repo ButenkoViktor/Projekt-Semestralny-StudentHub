@@ -50,5 +50,14 @@ namespace StudentHub.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("{groupId}/courses/{courseId}/grades-history")]
+        public async Task<IActionResult> GetGradesHistory( int groupId, int courseId)
+        {
+            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _service.GetGradesHistoryAsync(
+                teacherId!, groupId, courseId);
+            return Ok(result);
+        }
     }
 }

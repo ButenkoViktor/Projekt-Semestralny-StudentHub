@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { saveGrade } from "../../api/teacherGroupService";
 
 export default function GroupStudentsTable({
   students,
   groupId,
-  courseId
+  courseId,
+  lessonDate
 }) {
-    const [rows, setRows] = useState([]);
-    useEffect(() => {setRows(students);}, [students]);
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    setRows(students);
+  }, [students]);
 
   const update = (i, field, value) => {
     const copy = [...rows];
@@ -20,15 +24,17 @@ export default function GroupStudentsTable({
       studentId: row.studentId,
       groupId,
       courseId,
-      date: new Date().toISOString(),
+      date: lessonDate,
       grade: row.grade,
       isPresent: row.isPresent
     });
+    alert("Saved ✔");
   };
 
-  const finalAvg =
-    rows.reduce((s, r) => s + (r.grade ?? 0), 0) /
-    rows.filter(r => r.grade !== null).length || 0;
+  const avg = (r) =>
+    r.filter(x => x.grade != null)
+     .reduce((s, x) => s + x.grade, 0) /
+    (r.filter(x => x.grade != null).length || 1);
 
   return (
     <>
@@ -37,7 +43,7 @@ export default function GroupStudentsTable({
           <tr>
             <th>Student</th>
             <th>Present</th>
-            <th>Grade (1–5)</th>
+            <th>Grade</th>
             <th>Save</th>
           </tr>
         </thead>
@@ -45,7 +51,6 @@ export default function GroupStudentsTable({
           {rows.map((s, i) => (
             <tr key={s.studentId}>
               <td>{s.studentName}</td>
-
               <td>
                 <input
                   type="checkbox"
@@ -55,7 +60,6 @@ export default function GroupStudentsTable({
                   }
                 />
               </td>
-
               <td>
                 <select
                   value={s.grade ?? ""}
@@ -65,15 +69,12 @@ export default function GroupStudentsTable({
                 >
                   <option value="">–</option>
                   {[1,2,3,4,5].map(v => (
-                    <option key={v} value={v}>{v}</option>
+                    <option key={v}>{v}</option>
                   ))}
                 </select>
               </td>
-
               <td>
-                <button onClick={() => submit(s)}>
-                  Save
-                </button>
+                <button onClick={() => submit(s)}>Save</button>
               </td>
             </tr>
           ))}
@@ -81,7 +82,7 @@ export default function GroupStudentsTable({
       </table>
 
       <div className="final-grade">
-        Final semester average: <strong>{finalAvg.toFixed(2)}</strong>
+        Group average: <strong>{avg(rows).toFixed(2)}</strong>
       </div>
     </>
   );
