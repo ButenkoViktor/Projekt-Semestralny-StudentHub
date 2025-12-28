@@ -9,6 +9,12 @@ import AdminPage from "./pages/admin/AdminPage";
 import TeacherPage from "./pages/teacher/TeacherPage";
 import StudentPage from "./pages/student/StudentPage";
 
+import AdminHome from "./pages/admin/AdminHome";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminCourses from "./pages/admin/AdminCourses";
+import AdminGroups from "./pages/admin/AdminGroups";
+import AdminEvents from "./pages/admin/AdminEvents";
+
 import StudentHome from "./pages/student/StudentHome";
 import StudentCourses from "./pages/student/StudentCourses";
 import StudentTasks from "./pages/student/StudentTasks";
@@ -53,7 +59,13 @@ function App() {
               </RoleGuard>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminHome />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="courses" element={<AdminCourses />} />
+          <Route path="groups" element={<AdminGroups />} />
+          <Route path="events" element={<AdminEvents  />} />
+        </Route>
 
         <Route
           path="/teacher"

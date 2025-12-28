@@ -1,0 +1,27 @@
+.admin-dashboard h1 {
+  margin-bottom: 24px;
+}
+
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.stat-card h3 {
+  margin-bottom: 12px;
+  color: #555;
+}
+
+.stat-card span {
+  font-size: 32px;
+  font-weight: bold;
+}

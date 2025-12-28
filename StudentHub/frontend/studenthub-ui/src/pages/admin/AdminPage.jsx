@@ -1,4 +1,9 @@
-export default function AdminPage() 
-    {
-    return <h1>Admin Page</h1>; 
-    }
+import { Outlet } from "react-router-dom";
+
+export default function AdminPage() {
+  return (
+    <div style={{ padding: "24px" }}>
+      <Outlet />
+    </div>
+  );
+}
