@@ -71,7 +71,8 @@ namespace StudentHub.API.Controllers
             var course = new Course
             {
                 Title = dto.Title,
-                Description = dto.Description
+                Description = dto.Description,
+                TeacherId = dto.TeacherId
             };
 
             return Ok(await _service.CreateAsync(course));

@@ -6,5 +6,6 @@ namespace StudentHub.Api.Models.Courses
     {
         public string Title { get; set; } = default!;
         public string? Description { get; set; }
+        public string TeacherId { get; set; }
     }
 }

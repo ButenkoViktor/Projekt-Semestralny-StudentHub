@@ -19,7 +19,6 @@ namespace StudentHub.Api.Controllers
             _userManager = userManager;
         }
 
-        // GET 
         [HttpGet("me")]
         public async Task<IActionResult> GetMyInfo()
         {
@@ -43,7 +42,6 @@ namespace StudentHub.Api.Controllers
             });
         }
 
-        // PUT 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUser(UpdateUserDto dto)
         {
@@ -64,5 +62,20 @@ namespace StudentHub.Api.Controllers
 
             return Ok("User updated successfully");
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("teachers")]
+        public async Task<IActionResult> GetTeachers()
+        {
+            var teachers = await _userManager.GetUsersInRoleAsync("Teacher");
+
+            return Ok(teachers.Select(t => new {
+                t.Id,
+                t.FirstName,
+                t.LastName,
+                t.Email
+            }));
+        }
+
     }
 }
