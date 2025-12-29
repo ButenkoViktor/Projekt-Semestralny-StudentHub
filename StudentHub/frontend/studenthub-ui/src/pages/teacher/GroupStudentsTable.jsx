@@ -1,40 +1,33 @@
-import { useEffect, useState } from "react";
 import { saveGrade } from "../../api/teacherGroupService";
 
 export default function GroupStudentsTable({
   students,
+  setStudents,
   groupId,
   courseId,
   lessonDate
 }) {
-  const [rows, setRows] = useState([]);
-
-  useEffect(() => {
-    setRows(students);
-  }, [students]);
-
-  const update = (i, field, value) => {
-    const copy = [...rows];
-    copy[i][field] = value;
-    setRows(copy);
+  const update = (id, patch) => {
+    setStudents(prev =>
+      prev.map(s =>
+        s.studentId === id ? { ...s, ...patch } : s
+      )
+    );
   };
 
-  const submit = async (row) => {
-    await saveGrade({
-      studentId: row.studentId,
-      groupId,
-      courseId,
-      date: lessonDate,
-      grade: row.grade,
-      isPresent: row.isPresent
-    });
-    alert("Saved ✔");
+  const saveAll = async () => {
+    for (const s of students) {
+      await saveGrade({
+        studentId: s.studentId,
+        groupId,
+        courseId,
+        date: lessonDate,
+        isPresent: s.isPresent,
+        grade: s.grade
+      });
+    }
+    alert("Saved successfully");
   };
-
-  const avg = (r) =>
-    r.filter(x => x.grade != null)
-     .reduce((s, x) => s + x.grade, 0) /
-    (r.filter(x => x.grade != null).length || 1);
 
   return (
     <>
@@ -44,11 +37,10 @@ export default function GroupStudentsTable({
             <th>Student</th>
             <th>Present</th>
             <th>Grade</th>
-            <th>Save</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((s, i) => (
+          {students.map(s => (
             <tr key={s.studentId}>
               <td>{s.studentName}</td>
               <td>
@@ -56,34 +48,34 @@ export default function GroupStudentsTable({
                   type="checkbox"
                   checked={s.isPresent}
                   onChange={e =>
-                    update(i, "isPresent", e.target.checked)
+                    update(s.studentId, { isPresent: e.target.checked })
                   }
                 />
               </td>
               <td>
-                <select
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
                   value={s.grade ?? ""}
+                  disabled={!s.isPresent}
                   onChange={e =>
-                    update(i, "grade", Number(e.target.value))
+                    update(s.studentId, {
+                      grade: e.target.value
+                        ? Number(e.target.value)
+                        : null
+                    })
                   }
-                >
-                  <option value="">–</option>
-                  {[1,2,3,4,5].map(v => (
-                    <option key={v}>{v}</option>
-                  ))}
-                </select>
-              </td>
-              <td>
-                <button onClick={() => submit(s)}>Save</button>
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="final-grade">
-        Group average: <strong>{avg(rows).toFixed(2)}</strong>
-      </div>
+      <button className="save-btn" onClick={saveAll}>
+        Save all
+      </button>
     </>
   );
 }

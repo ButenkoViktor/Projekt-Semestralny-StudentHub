@@ -1,13 +1,11 @@
 import axios from "./axios";
 
-export const getMyGroups = async () => {
-  const res = await axios.get("/teacher/groups");
-  return res.data;
-};
-
-export const getGroupStudents = async (groupId, courseId) => {
+export const getGroupStudents = async (groupId, courseId, date) => {
   const res = await axios.get(
-    `/teacher/groups/${groupId}/course/${courseId}`
+    `/teacher/groups/${groupId}/students`,
+    {
+      params: { courseId, date }
+    }
   );
   return res.data;
 };
@@ -18,14 +16,10 @@ export const saveGrade = async (payload) => {
 
 export const getGradesHistory = async (groupId, courseId) => {
   const res = await axios.get(
-    `/teacher/groups/${groupId}/courses/${courseId}/grades-history`
-  );
-  return res.data;
-};
-
-export const getFinalGrades = async (groupId, courseId) => {
-  const res = await axios.get(
-    `/teacher/groups/${groupId}/courses/${courseId}/final-grades`
+    `/teacher/groups/${groupId}/grades-history`,
+    {
+      params: { courseId }
+    }
   );
   return res.data;
 };

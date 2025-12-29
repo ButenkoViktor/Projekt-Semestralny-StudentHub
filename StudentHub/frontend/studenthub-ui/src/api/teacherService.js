@@ -1,50 +1,26 @@
-import { getToken } from "./authService";
+import axios from "./axios";
 
-const API_URL = "https://localhost:7091/api";
+export const getTeacherProfile = async () => {
+  const res = await axios.get("/User/me");
+  return res.data;
+};
 
-function authHeaders() {
-  return {
-    Authorization: `Bearer ${getToken()}`,
-    "Content-Type": "application/json"
-  };
-}
+export const getTeacherCourses = async () => {
+  const res = await axios.get("/Courses");
+  return res.data;
+};
 
-export async function getTeacherProfile() {
-  const res = await fetch(`${API_URL}/User/me`, {
-    headers: authHeaders()
-  });
-  if (!res.ok) throw new Error("Failed to load profile");
-  return res.json();
-}
+export const getTeacherTasks = async () => {
+  const res = await axios.get("/Tasks");
+  return res.data;
+};
 
-export async function getTeacherCourses() {
-  const res = await fetch(`${API_URL}/Courses`, {
-    headers: authHeaders()
-  });
-  if (!res.ok) throw new Error("Failed to load courses");
-  return res.json();
-}
+export const getTeacherSchedule = async () => {
+  const res = await axios.get("/Schedule");
+  return res.data;
+};
 
-export async function getTeacherTasks() {
-  const res = await fetch(`${API_URL}/Tasks`, {
-    headers: authHeaders()
-  });
-  if (!res.ok) throw new Error("Failed to load tasks");
-  return res.json();
-}
-
-export async function getTeacherSchedule() {
-  const res = await fetch(`${API_URL}/Schedule`, {
-    headers: authHeaders()
-  });
-  if (!res.ok) throw new Error("Failed to load schedule");
-  return res.json();
-}
-
-export async function getTeacherGroups() {
-  const res = await fetch(`${API_URL}/Groups`, {
-    headers: authHeaders()
-  });
-  if (!res.ok) throw new Error("Failed to load groups");
-  return res.json();
-}
+export const getTeacherGroups = async () => {
+  const res = await axios.get("/teacher/groups");
+  return res.data;
+};
