@@ -5,7 +5,6 @@ export default function Home() {
   return (
     <div className="home-container">
 
-      {/* HERO */}
       <section className="hero">
         <h1>StudentHub</h1>
         <p>A centralized platform for students and teachers</p>
@@ -16,7 +15,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURES */}
       <section className="features">
         <div className="feature-card">
           <h3>📚 Study Materials</h3>
@@ -34,7 +32,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="footer">
         <p>© 2025 StudentHub. All rights reserved.</p>
       </footer>

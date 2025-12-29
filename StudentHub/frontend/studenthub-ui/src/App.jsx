@@ -30,6 +30,7 @@ import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import RoleGuard from "./auth/RoleGuard";
 import Navbar from "./components/Navbar";
+import ProfilePage from "./pages/ProfilePage";
 
 import ChatButton from "./chat/ChatButton";
 import ChatWindow from "./chat/ChatWindow";
@@ -49,6 +50,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<ProfilePage />} />
 
         <Route
           path="/admin"
