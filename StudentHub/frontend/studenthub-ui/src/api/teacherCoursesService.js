@@ -1,22 +1,11 @@
-import { getToken } from "./authService";
+import axios from "axios";
+import { authHeader } from "../utils/authHeader";
 
-const API_URL = "https://localhost:7091/api";
-
-function authHeaders() {
-  return {
-    Authorization: `Bearer ${getToken()}`,
-    "Content-Type": "application/json"
-  };
-}
+const API_URL = "https://localhost:7091/api/courses";
 
 export async function getMyCourses() {
-  const res = await fetch(`${API_URL}/Courses/my`, {
-    headers: authHeaders()
+  const res = await axios.get(`${API_URL}/my`, {
+    headers: authHeader(),
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to load courses");
-  }
-
-  return res.json();
+  return res.data;
 }

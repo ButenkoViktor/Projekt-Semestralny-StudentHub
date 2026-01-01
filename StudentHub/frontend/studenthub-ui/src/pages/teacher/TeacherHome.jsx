@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  getTeacherProfile,
-  getTeacherCourses,
-  getTeacherTasks,
-  getTeacherSchedule
-} from "../../api/teacherService";
+import { getTeacherProfile, getTeacherSchedule } from "../../api/teacherService";
+import { getMyCourses } from "../../api/teacherCoursesService";
+import { getTeacherTasks } from "../../api/tasksService";
 import "./TeacherHome.css";
 
 export default function TeacherHome() {
@@ -13,6 +10,7 @@ export default function TeacherHome() {
   const [tasks, setTasks] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -24,17 +22,18 @@ export default function TeacherHome() {
           scheduleData
         ] = await Promise.all([
           getTeacherProfile(),
-          getTeacherCourses(),
+          getMyCourses(),
           getTeacherTasks(),
           getTeacherSchedule()
         ]);
 
         setTeacher(teacherData);
-        setCourses(coursesData);
-        setTasks(tasksData);
-        setSchedule(scheduleData);
+        setCourses(coursesData || []);
+        setTasks(tasksData || []);
+        setSchedule(scheduleData || []);
       } catch (e) {
         console.error("TeacherHome error:", e);
+        setError("Failed to load teacher dashboard");
       } finally {
         setLoading(false);
       }
@@ -45,6 +44,14 @@ export default function TeacherHome() {
 
   if (loading) {
     return <div className="teacher-loading">Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return <div className="teacher-error">{error}</div>;
+  }
+
+  if (!teacher) {
+    return <div className="teacher-error">Teacher profile not found</div>;
   }
 
   return (
@@ -112,8 +119,8 @@ function DashboardCard({ title, items, emptyText, renderItem, highlight }) {
         <p className="empty">{emptyText}</p>
       ) : (
         <ul className="simple-list">
-          {items.map((item, i) => (
-            <li key={item.id || i}>{renderItem(item)}</li>
+          {items.map(item => (
+            <li key={item.id}>{renderItem(item)}</li>
           ))}
         </ul>
       )}

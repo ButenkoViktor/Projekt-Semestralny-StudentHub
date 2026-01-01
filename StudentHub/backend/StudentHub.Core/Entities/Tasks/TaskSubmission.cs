@@ -46,6 +46,11 @@ namespace StudentHub.Core.Entities.Tasks
         public string? AnswerText { get; set; }
 
         /// <summary>
+        /// Gets or sets the status of the task submission.
+        /// </summary>
+        public TaskSubmissionStatus Status { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of files associated with the task submission.
         /// </summary>
         /// <remarks>The collection may be null if no files have been provided. Modifying the collection
