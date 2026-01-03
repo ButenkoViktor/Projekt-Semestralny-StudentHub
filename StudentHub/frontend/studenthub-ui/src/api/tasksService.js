@@ -1,25 +1,25 @@
 import axios from "./axios";
 
-export async function getTeacherTasks() {
+export const getTeacherTasks = async () => {
   const res = await axios.get("/tasks/teacher");
   return res.data;
-}
+};
 
-export async function createTask(data) {
+export const createTask = async (data) => {
   const res = await axios.post("/tasks", data);
   return res.data;
-}
+};
 
-export async function updateTask(id, data) {
+export const updateTask = async (id, data) => {
   const res = await axios.put(`/tasks/${id}`, data);
   return res.data;
-}
+};
 
-export async function deleteTask(id) {
+export const deleteTask = async (id) => {
   await axios.delete(`/tasks/${id}`);
-}
+};
 
-export async function getTaskSubmissions(taskId) {
+export const getTaskSubmissions = async (taskId) => {
   const res = await axios.get(`/tasks/${taskId}/submissions`);
   return res.data;
-}
+};

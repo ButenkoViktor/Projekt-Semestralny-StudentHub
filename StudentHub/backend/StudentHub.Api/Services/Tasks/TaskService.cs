@@ -13,6 +13,23 @@ namespace StudentHub.Api.Services.Tasks
             _context = context;
         }
 
+        public async Task<TaskItem> CreateAsync(TaskItem task)
+        {
+            // ✅ перевірка існування курсу
+            var courseExists = await _context.Courses
+                .AnyAsync(c => c.Id == task.CourseId);
+
+            if (!courseExists)
+            {
+                throw new ArgumentException(
+                    $"Course with id {task.CourseId} does not exist");
+            }
+
+            _context.Tasks.Add(task);
+            await _context.SaveChangesAsync();
+            return task;
+        }
+
         public async Task<IEnumerable<TaskItem>> GetForTeacherAsync(string teacherId)
         {
             return await _context.Tasks
@@ -37,13 +54,6 @@ namespace StudentHub.Api.Services.Tasks
                 .Include(t => t.Submissions)
                 .ThenInclude(s => s.Files)
                 .FirstOrDefaultAsync(t => t.Id == id);
-        }
-
-        public async Task<TaskItem> CreateAsync(TaskItem task)
-        {
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
-            return task;
         }
 
         public async Task<TaskItem> UpdateAsync(TaskItem task)

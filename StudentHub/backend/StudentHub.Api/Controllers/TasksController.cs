@@ -37,7 +37,14 @@ public class TasksController : ControllerBase
             GroupId = dto.GroupId
         };
 
-        return Ok(await _taskService.CreateAsync(task));
+        try
+        {
+            return Ok(await _taskService.CreateAsync(task));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [Authorize(Roles = "Teacher")]
