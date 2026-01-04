@@ -1,146 +1,97 @@
 import { useEffect, useState } from "react";
-import {
-  getAllCourses,
-  createCourse,
-  updateCourse,
-  deleteCourse
-} from "../../api/adminCourseService";
-import axios from "../../api/axios";
+import api from "../../api/axios";
 import "./AdminCourses.css";
 
 export default function AdminCourses() {
   const [courses, setCourses] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [teacherId, setTeacherId] = useState("");
-  const [editingId, setEditingId] = useState(null);
+
+  const loadData = async () => {
+    try {
+      const coursesRes = await api.get("/courses");
+      const usersRes = await api.get("/admin/users");
+
+      const teacherUsers = usersRes.data.filter(u =>
+        u.roles.includes("Teacher")
+      );
+
+      setCourses(coursesRes.data);
+      setTeachers(teacherUsers);
+    } catch (e) {
+      alert("Error loading data");
+    }
+  };
 
   useEffect(() => {
-    load();
-    loadTeachers();
+    loadData();
   }, []);
 
-  async function load() {
-    try {
-      setLoading(true);
-      const data = await getAllCourses();
-      setCourses(data);
-    } catch (e) {
-      alert(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function loadTeachers() {
-    try {
-      const res = await axios.get("/Users/teachers");
-      setTeachers(res.data);
-    } catch {
-      alert("Failed to load teachers");
-    }
-  }
-
-  async function submit(e) {
-    e.preventDefault();
-
-    if (!teacherId) {
-      alert("Select teacher");
+  const createCourse = async () => {
+    if (!title || !teacherId) {
+      alert("Title and teacher are required");
       return;
     }
 
-    const payload = {
+    await api.post("/courses", {
       title,
       description,
       teacherId
-    };
+    });
 
-    try {
-      if (editingId) {
-        await updateCourse(editingId, payload);
-      } else {
-        await createCourse(payload);
-      }
-
-      resetForm();
-      load();
-    } catch (e) {
-      alert(e.message);
-    }
-  }
-
-  function edit(course) {
-    setEditingId(course.id);
-    setTitle(course.title);
-    setDescription(course.description || "");
-    setTeacherId(course.teacherId);
-  }
-
-  async function remove(id) {
-    if (!window.confirm("Delete course?")) return;
-    await deleteCourse(id);
-    load();
-  }
-
-  function resetForm() {
     setTitle("");
     setDescription("");
     setTeacherId("");
-    setEditingId(null);
-  }
+
+    loadData();
+  };
+
+  const deleteCourse = async (id) => {
+    if (!window.confirm("Delete this course?")) return;
+    await api.delete(`/courses/${id}`);
+    loadData();
+  };
 
   return (
-    <div className="admin-courses">
-      <h1>Courses</h1>
+    <div className="courses-page">
+      <div className="courses-header">
+        <h1>Admin → Courses</h1>
+      </div>
 
-      <form className="course-form" onSubmit={submit}>
+      <div className="course-form">
+        <h3>Create course</h3>
+
         <input
           placeholder="Title"
           value={title}
-          onChange={e => setTitle(e.target.value)}
-          required
+          onChange={(e) => setTitle(e.target.value)}
         />
 
-        <input
+        <textarea
           placeholder="Description"
           value={description}
-          onChange={e => setDescription(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
         />
 
         <select
           value={teacherId}
-          onChange={e => setTeacherId(e.target.value)}
-          required
+          onChange={(e) => setTeacherId(e.target.value)}
         >
           <option value="">Select teacher</option>
           {teachers.map(t => (
             <option key={t.id} value={t.id}>
-              {t.firstName} {t.lastName}
+              {t.firstName} {t.lastName} ({t.email})
             </option>
           ))}
         </select>
 
-        <button type="submit">
-          {editingId ? "Update" : "Create"}
-        </button>
+        <button onClick={createCourse}>Create course</button>
+      </div>
 
-        {editingId && (
-          <button
-            type="button"
-            className="cancel"
-            onClick={resetForm}
-          >
-            Cancel
-          </button>
-        )}
-      </form>
-
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
+      <div className="courses-list">
         <table>
           <thead>
             <tr>
@@ -151,22 +102,32 @@ export default function AdminCourses() {
             </tr>
           </thead>
           <tbody>
-            {courses.map(c => (
-              <tr key={c.id}>
-                <td>{c.title}</td>
-                <td>{c.description}</td>
-                <td>
-                  {c.teacher?.firstName} {c.teacher?.lastName}
-                </td>
-                <td className="actions">
-                  <button onClick={() => edit(c)}>Edit</button>
-                  <button onClick={() => remove(c.id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+            {courses.map(c => {
+              const teacher = teachers.find(t => t.id === c.teacherId);
+
+              return (
+                <tr key={c.id}>
+                  <td>{c.title}</td>
+                  <td>{c.description}</td>
+                  <td>
+                    {teacher
+                      ? `${teacher.firstName} ${teacher.lastName}`
+                      : "—"}
+                  </td>
+                  <td className="course-actions">
+                    <button
+                      className="delete"
+                      onClick={() => deleteCourse(c.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
-      )}
+      </div>
     </div>
   );
 }

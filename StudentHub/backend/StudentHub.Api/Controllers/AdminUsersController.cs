@@ -31,7 +31,6 @@ namespace StudentHub.Api.Controllers
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-
                 result.Add(new AdminUserDto
                 {
                     Id = user.Id,
@@ -48,69 +47,38 @@ namespace StudentHub.Api.Controllers
         [HttpPost("assign-role")]
         public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var user = await _userManager.FindByIdAsync(dto.UserId);
-            if (user == null)
-                return NotFound("User not found");
+            if (user == null) return NotFound();
 
             if (!await _roleManager.RoleExistsAsync(dto.Role))
-                return BadRequest("Role does not exist");
+                return BadRequest("Role not found");
 
             if (await _userManager.IsInRoleAsync(user, dto.Role))
-                return BadRequest("User already has this role");
+                return BadRequest("Already has role");
 
-            var result = await _userManager.AddToRoleAsync(user, dto.Role);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
+            await _userManager.AddToRoleAsync(user, dto.Role);
             return Ok();
         }
 
         [HttpPost("remove-role")]
         public async Task<IActionResult> RemoveRole([FromBody] AssignRoleDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var user = await _userManager.FindByIdAsync(dto.UserId);
-            if (user == null)
-                return NotFound("User not found");
+            if (user == null) return NotFound();
 
-            if (!await _roleManager.RoleExistsAsync(dto.Role))
-                return BadRequest("Role does not exist");
-
-            if (!await _userManager.IsInRoleAsync(user, dto.Role))
-                return BadRequest("User does not have this role");
-
-            var result = await _userManager.RemoveFromRoleAsync(user, dto.Role);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
+            await _userManager.RemoveFromRoleAsync(user, dto.Role);
             return Ok();
         }
 
         [HttpPut("update-email")]
-        public async Task<IActionResult> UpdateUserEmail([FromBody] UpdateUserEmailDto dto)
+        public async Task<IActionResult> UpdateEmail([FromBody] UpdateUserEmailDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var user = await _userManager.FindByIdAsync(dto.UserId);
-            if (user == null)
-                return NotFound("User not found");
-
-            var emailExists = await _userManager.FindByEmailAsync(dto.NewEmail);
-            if (emailExists != null && emailExists.Id != user.Id)
-                return BadRequest("Email already in use");
+            if (user == null) return NotFound();
 
             user.Email = dto.NewEmail;
             user.UserName = dto.NewEmail;
-
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+            await _userManager.UpdateAsync(user);
 
             return Ok();
         }
