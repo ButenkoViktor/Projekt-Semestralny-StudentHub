@@ -176,3 +176,9 @@ static bool DatabaseExists(string conn)
         return false;
     }
 }
+
+
+
+builder.Services
+    .AddControllers()
+    .AddApplicationPart(typeof(StudentHub.Api.Controllers.UserController).Assembly);

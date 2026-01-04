@@ -55,9 +55,11 @@ export default function StudentHome() {
   return (
     <div className="student-home">
       <section className="welcome-card">
-        <h1>
-          Welcome back, <span>{user.firstName}</span>
-        </h1>
+          {user && (
+            <h1>
+                Welcome back, <span>{user.firstName}</span>
+            </h1>
+          )}
         <p>Your academic overview for today</p>
       </section>
 

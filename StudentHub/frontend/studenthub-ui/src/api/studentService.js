@@ -35,7 +35,7 @@ export async function getTodaySchedule() {
 }
 
 export async function getUpcomingDeadlines() {
-  const res = await fetch(`${API_URL}/Tasks`, {
+  const res = await fetch(`${API_URL}/tasks/student`, {
     headers: authHeaders()
   });
 
@@ -61,7 +61,7 @@ export async function getAnnouncements() {
 }
 
 export async function getStudyStats() {
-  const res = await fetch(`${API_URL}/Tasks`, {
+  const res = await fetch(`${API_URL}/tasks/student`, {
     headers: authHeaders()
   });
 
