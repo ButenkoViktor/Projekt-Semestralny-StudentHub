@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StudentHub.Api.Models.Roles
+namespace StudentHub.Api.Models.Admin
 {
     public class AssignRoleDto
     {

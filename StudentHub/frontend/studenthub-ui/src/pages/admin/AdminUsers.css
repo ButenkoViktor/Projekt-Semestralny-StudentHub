@@ -1,0 +1,71 @@
+.admin-users {
+  padding: 24px;
+}
+
+.admin-users h1 {
+  margin-bottom: 16px;
+}
+
+.admin-users-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.admin-users select,
+.admin-users input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.admin-users table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.admin-users th,
+.admin-users td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.admin-users th {
+  background: #f4f6f8;
+  font-weight: 600;
+}
+
+.admin-users tr:hover {
+  background: #fafafa;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-right: 4px;
+  border-radius: 12px;
+  background: #e0e7ff;
+  color: #1e40af;
+  font-size: 12px;
+}
+
+.action-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+}
+
+.action-btn.danger {
+  background: #dc2626;
+}
+
+.email-edit {
+  display: flex;
+  gap: 6px;
+}
