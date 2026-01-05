@@ -2,6 +2,6 @@
 {
     public class CreateGroupDto
     {
-        public string Name { get; set; } = default!;
+        public string Name { get; set; } = "";
     }
 }

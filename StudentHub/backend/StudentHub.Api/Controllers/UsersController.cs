@@ -56,7 +56,6 @@ namespace StudentHub.Api.Controllers
             user.FirstName = dto.FirstName;
             user.LastName = dto.LastName;
             user.AvatarUrl = dto.AvatarUrl;
-            user.GroupId = dto.GroupId;
 
             await _userManager.UpdateAsync(user);
             return Ok("User updated successfully");

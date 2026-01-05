@@ -14,44 +14,31 @@ namespace StudentHub.API.Services.Courses
             _context = context;
         }
 
-
         public async Task<IEnumerable<Course>> GetAllAsync()
-        {
-            return await _context.Courses.ToListAsync();
-        }
-
-
-        public async Task<IEnumerable<Course>> GetByTeacherIdAsync(string teacherId)
-        {
-            return await _context.Courses
-                .Where(c => c.TeacherId == teacherId)
-                .ToListAsync();
-        }
-        public async Task<IEnumerable<Course>> GetByStudentIdAsync(string studentId)
-        {
-            return await _context.TeacherCourseGroups
-                .Where(tc =>
-                    tc.Group.Students.Any(s => s.Id == studentId)
-                )
-                .Include(tc => tc.Course)
-                .Select(tc => tc.Course)
-                .Distinct()
-                .ToListAsync();
-        }
-
-        public async Task<bool> TeacherHasAccessAsync(string teacherId, int courseId)
-        {
-            return await _context.Courses
-                .AnyAsync(c => c.Id == courseId && c.TeacherId == teacherId);
-        }
+            => await _context.Courses.ToListAsync();
 
         public async Task<Course?> GetByIdAsync(int id)
-        {
-            return await _context.Courses
-                .Include(c => c.Tasks)
-                .Include(c => c.ScheduleItems)
+            => await _context.Courses
+                .Include(c => c.CourseGroups)
+                    .ThenInclude(cg => cg.Group)
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
+
+        public async Task<IEnumerable<Course>> GetByTeacherIdAsync(string teacherId)
+            => await _context.Courses
+                .Where(c => c.TeacherId == teacherId)
+                .ToListAsync();
+
+        public async Task<IEnumerable<Course>> GetByStudentIdAsync(string studentId)
+            => await _context.CourseGroups
+                .Where(cg =>
+                    cg.Group.GroupStudents.Any(gs => gs.StudentId == studentId))
+                .Select(cg => cg.Course)
+                .Distinct()
+                .ToListAsync();
+
+        public async Task<bool> TeacherHasAccessAsync(string teacherId, int courseId)
+            => await _context.Courses
+                .AnyAsync(c => c.Id == courseId && c.TeacherId == teacherId);
 
         public async Task<Course> CreateAsync(Course course)
         {
@@ -67,6 +54,7 @@ namespace StudentHub.API.Services.Courses
 
             existing.Title = updated.Title;
             existing.Description = updated.Description;
+            existing.TeacherId = updated.TeacherId;
 
             await _context.SaveChangesAsync();
             return existing;
@@ -80,6 +68,21 @@ namespace StudentHub.API.Services.Courses
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task AssignGroupAsync(int courseId, int groupId)
+        {
+            if (!await _context.CourseGroups
+                .AnyAsync(x => x.CourseId == courseId && x.GroupId == groupId))
+            {
+                _context.CourseGroups.Add(new CourseGroup
+                {
+                    CourseId = courseId,
+                    GroupId = groupId
+                });
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -23,8 +23,10 @@ namespace StudentHub.Infrastructure.Data
         }
 
         // Groups & Courses
-        public DbSet<Group> Groups { get; set; }
-        public DbSet<Course> Courses { get; set; }
+        public DbSet<Group> Groups => Set<Group>();
+        public DbSet<Course> Courses => Set<Course>();
+        public DbSet<GroupStudent> GroupStudents => Set<GroupStudent>();
+        public DbSet<CourseGroup> CourseGroups => Set<CourseGroup>();
 
         // Announcements
         public DbSet<Announcement> Announcements { get; set; }
@@ -49,6 +51,7 @@ namespace StudentHub.Infrastructure.Data
         public DbSet<TaskSubmissionFile> TaskSubmissionFiles { get; set; }
         public DbSet<TeacherCourseGroup> TeacherCourseGroups => Set<TeacherCourseGroup>();
         public DbSet<StudentGrade> StudentGrades => Set<StudentGrade>();
+
 
         // Schedule
         public DbSet<ScheduleItem> ScheduleItems { get; set; }
@@ -99,20 +102,41 @@ namespace StudentHub.Infrastructure.Data
             modelBuilder.Entity<TaskItem>()
                 .HasIndex(t => t.Deadline);
 
-            modelBuilder.Entity<TeacherCourseGroup>()
-                .HasOne(x => x.Group)
-                .WithMany()
-                .HasForeignKey(x => x.GroupId);
+            modelBuilder.Entity<GroupStudent>()
+                .HasKey(gs => new { gs.GroupId, gs.StudentId });
 
-            modelBuilder.Entity<TeacherCourseGroup>()
-                .HasOne(x => x.Course)
-                .WithMany()
-                .HasForeignKey(x => x.CourseId);
+            modelBuilder.Entity<GroupStudent>()
+                .HasOne(gs => gs.Student)
+                .WithMany(u => u.GroupStudents)
+                .HasForeignKey(gs => gs.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<TeacherCourseGroup>()
-                .HasOne(x => x.Teacher)
+            modelBuilder.Entity<GroupStudent>()
+                .HasOne(gs => gs.Student)
                 .WithMany()
-                .HasForeignKey(x => x.TeacherId);
+                .HasForeignKey(gs => gs.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CourseGroup>()
+                .HasKey(x => new { x.CourseId, x.GroupId });
+
+            modelBuilder.Entity<StudentGrade>()
+                .HasOne(sg => sg.Student)
+                .WithMany()
+                .HasForeignKey(sg => sg.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Teacher)
+                .WithMany()
+                .HasForeignKey(c => c.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StudentGrade>()
+                .HasOne(sg => sg.Course)
+                .WithMany()
+                .HasForeignKey(sg => sg.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

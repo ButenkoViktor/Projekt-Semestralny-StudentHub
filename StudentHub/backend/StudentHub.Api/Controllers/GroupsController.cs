@@ -34,27 +34,18 @@ namespace StudentHub.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateGroupDto dto)
         {
-            var group = new Group
-            {
-                Name = dto.Name
-            };
-
-            var created = await _service.CreateAsync(group);
+            var created = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdateGroupDto dto)
         {
-            var updated = new Group
-            {
-                Name = dto.Name
-            };
-
-            var result = await _service.UpdateAsync(id, updated);
+            var result = await _service.UpdateAsync(id, dto);
             if (result == null) return NotFound();
             return Ok(result);
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentHub.Api.Models.Courses;
+using StudentHub.Api.Models.Groups;
 using StudentHub.Api.Services.Groups;
 using StudentHub.Core.Entities.Groups;
 using System.Security.Claims;
@@ -87,6 +88,14 @@ namespace StudentHub.API.Controllers
                 return NotFound();
 
             return NoContent();
+        }
+
+        [HttpPost("assign-group")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignGroup(AssignGroupToCourseDto dto)
+        {
+            await _service.AssignGroupAsync(dto.CourseId, dto.GroupId);
+            return Ok();
         }
     }
 }

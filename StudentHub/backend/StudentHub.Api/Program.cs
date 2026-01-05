@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StudentHub.Api.Hubs;
-using StudentHub.Api.Services;
+
 using StudentHub.Api.Services.Announcements;
 using StudentHub.Api.Services.Chat;
 using StudentHub.Api.Services.Groups;
 using StudentHub.Api.Services.Notifications;
 using StudentHub.Api.Services.Schedule;
 using StudentHub.API.Services.Courses;
-using StudentHub.API.Services.Groups;
 using StudentHub.Api.Services.Tasks;
 using StudentHub.Api.Services.Files;
 using StudentHub.Api.Services.Events;
@@ -123,7 +122,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<ITeacherGroupService, TeacherGroupService>();
-
+builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddSignalR();
 
 

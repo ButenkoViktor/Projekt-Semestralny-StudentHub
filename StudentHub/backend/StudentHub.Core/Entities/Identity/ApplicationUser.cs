@@ -1,47 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using StudentHub.Core.Entities.Announcements;
-using StudentHub.Core.Entities.Chat;
 using StudentHub.Core.Entities.Groups;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentHub.Core.Entities.Identity
 {
     public class ApplicationUser : IdentityUser
     {
-        /// <summary>
-        /// Gets or sets the first name of the person.
-        /// </summary>
-        public string FirstName { get; set; } = default!;
-        /// <summary>
-        /// Gets or sets the last name of the person.
-        /// </summary>
-        public string LastName { get; set; } = default!;
-        /// <summary>
-        /// Gets or sets the URL of the user's avatar image.
-        /// </summary>
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? AvatarUrl { get; set; }
 
-        /// <summary>
-        /// Gets or sets the group identifier associated with this person. Foreign key referencing the Group entity.
-        /// </summary>
-        public int? GroupId { get; set; }
-        /// <summary>
-        /// Gets or sets the group associated with this instance.
-        /// </summary>
-        public Group? Group { get; set; }
+        public ICollection<Course> TeachingCourses { get; set; } = new List<Course>();
 
-        /// <summary>
-        /// Gets or sets the collection of chat messages associated with the chat session.
-        /// </summary>
-        public ICollection<ChatMessage>? Messages { get; set; }
+        public ICollection<GroupStudent> GroupStudents { get; set; } = new List<GroupStudent>();
 
-        /// <summary>
-        /// Gets or sets the collection of announcements associated with this entity.
-        /// </summary>
         public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
     }
 }

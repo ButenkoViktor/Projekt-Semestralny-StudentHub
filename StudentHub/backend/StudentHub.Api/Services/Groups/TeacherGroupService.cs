@@ -33,7 +33,7 @@ namespace StudentHub.Api.Services.Groups
         }
 
         public async Task<IEnumerable<StudentGradeDto>> GetGroupStudentsAsync(
-            string teacherId, int groupId, int courseId)
+    string teacherId, int groupId, int courseId)
         {
             var hasAccess = await _context.TeacherCourseGroups.AnyAsync(x =>
                 x.TeacherId == teacherId &&
@@ -43,13 +43,12 @@ namespace StudentHub.Api.Services.Groups
             if (!hasAccess)
                 throw new UnauthorizedAccessException();
 
-            var students = await _context.Groups
-                .Where(g => g.Id == groupId)
-                .SelectMany(g => g.Students!)
-                .Select(s => new StudentGradeDto
+            var students = await _context.GroupStudents
+                .Where(gs => gs.GroupId == groupId)
+                .Select(gs => new StudentGradeDto
                 {
-                    StudentId = s.Id,
-                    StudentName = s.FirstName + " " + s.LastName,
+                    StudentId = gs.StudentId,
+                    StudentName = gs.Student.FirstName + " " + gs.Student.LastName,
                     Grade = null,
                     IsPresent = false
                 })

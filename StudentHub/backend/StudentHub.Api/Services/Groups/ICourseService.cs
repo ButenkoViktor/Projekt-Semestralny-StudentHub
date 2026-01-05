@@ -12,5 +12,6 @@ namespace StudentHub.Api.Services.Groups
         Task<IEnumerable<Course>> GetByTeacherIdAsync(string teacherId);
         Task<IEnumerable<Course>> GetByStudentIdAsync(string studentId);
         Task<bool> TeacherHasAccessAsync(string teacherId, int courseId);
+        Task AssignGroupAsync(int courseId, int groupId);
     }
 }

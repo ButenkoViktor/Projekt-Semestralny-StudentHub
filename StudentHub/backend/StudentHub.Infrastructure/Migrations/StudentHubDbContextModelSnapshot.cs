@@ -207,9 +207,6 @@ namespace StudentHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("ChatRoomId")
                         .HasColumnType("int");
 
@@ -225,8 +222,6 @@ namespace StudentHub.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ChatRoomId");
 
@@ -368,15 +363,15 @@ namespace StudentHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TeacherId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -384,9 +379,26 @@ namespace StudentHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("StudentHub.Core.Entities.Groups.CourseGroup", b =>
+                {
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CourseId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("CourseGroups");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Group", b =>
@@ -404,6 +416,26 @@ namespace StudentHub.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("StudentHub.Core.Entities.Groups.GroupStudent", b =>
+                {
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("GroupId", "StudentId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("GroupStudents");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.TeacherCourseGroup", b =>
@@ -458,14 +490,9 @@ namespace StudentHub.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -502,8 +529,6 @@ namespace StudentHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -797,10 +822,6 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("StudentHub.Core.Entities.Chat.ChatMessage", b =>
                 {
-                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("StudentHub.Core.Entities.Chat.ChatRoom", "ChatRoom")
                         .WithMany("Messages")
                         .HasForeignKey("ChatRoomId")
@@ -832,7 +853,7 @@ namespace StudentHub.Infrastructure.Migrations
                     b.HasOne("StudentHub.Core.Entities.Groups.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("StudentHub.Core.Entities.Groups.Group", "Group")
@@ -844,7 +865,7 @@ namespace StudentHub.Infrastructure.Migrations
                     b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -856,9 +877,59 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Course", b =>
                 {
-                    b.HasOne("StudentHub.Core.Entities.Groups.Group", null)
-                        .WithMany("Courses")
-                        .HasForeignKey("GroupId");
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
+                        .WithMany("TeachingCourses")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("StudentHub.Core.Entities.Groups.CourseGroup", b =>
+                {
+                    b.HasOne("StudentHub.Core.Entities.Groups.Course", "Course")
+                        .WithMany("CourseGroups")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentHub.Core.Entities.Groups.Group", "Group")
+                        .WithMany("CourseGroups")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("StudentHub.Core.Entities.Groups.GroupStudent", b =>
+                {
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", null)
+                        .WithMany("GroupStudents")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("StudentHub.Core.Entities.Groups.Group", "Group")
+                        .WithMany("GroupStudents")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentHub.Core.Entities.Identity.ApplicationUser", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.TeacherCourseGroup", b =>
@@ -886,15 +957,6 @@ namespace StudentHub.Infrastructure.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("StudentHub.Core.Entities.Identity.ApplicationUser", b =>
-                {
-                    b.HasOne("StudentHub.Core.Entities.Groups.Group", "Group")
-                        .WithMany("Students")
-                        .HasForeignKey("GroupId");
-
-                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Notifications.Notification", b =>
@@ -982,6 +1044,8 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Course", b =>
                 {
+                    b.Navigation("CourseGroups");
+
                     b.Navigation("ScheduleItems");
 
                     b.Navigation("Tasks");
@@ -989,16 +1053,18 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("StudentHub.Core.Entities.Groups.Group", b =>
                 {
-                    b.Navigation("Courses");
+                    b.Navigation("CourseGroups");
 
-                    b.Navigation("Students");
+                    b.Navigation("GroupStudents");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Identity.ApplicationUser", b =>
                 {
                     b.Navigation("Announcements");
 
-                    b.Navigation("Messages");
+                    b.Navigation("GroupStudents");
+
+                    b.Navigation("TeachingCourses");
                 });
 
             modelBuilder.Entity("StudentHub.Core.Entities.Tasks.TaskItem", b =>
