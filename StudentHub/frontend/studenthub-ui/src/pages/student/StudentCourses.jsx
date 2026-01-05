@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMyCourses } from "../../api/studentCoursesService";
+import { getMyCourses } from "../../api/coursesService";
 import "./StudentCourses.css";
 
 export default function StudentCourses() {
@@ -7,18 +7,9 @@ export default function StudentCourses() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadCourses() {
-      try {
-        const data = await getMyCourses();
-        setCourses(data);
-      } catch (err) {
-        console.error("Courses load error:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadCourses();
+    getMyCourses()
+      .then(setCourses)
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -26,41 +17,32 @@ export default function StudentCourses() {
   }
 
   return (
-    <div className="student-courses">
-      <header className="courses-header">
+    <div className="student-home">
+      <section className="welcome-card">
         <h1>My Courses</h1>
-        <p>All courses you are currently enrolled in</p>
-      </header>
+        <p>Courses assigned to your group</p>
+      </section>
 
-      {courses.length === 0 ? (
-        <div className="empty-state">
-          <p>You are not enrolled in any courses yet.</p>
-        </div>
-      ) : (
-        <div className="courses-grid">
-          {courses.map(course => (
-            <div className="course-card" key={course.id}>
-              <div className="course-card-header">
-                <h3>{course.title}</h3>
-                <span className="badge">{course.semester}</span>
-              </div>
+      <div className="dashboard-grid">
+        {courses.map(course => (
+          <section className="dashboard-card" key={course.id}>
+            <h2>{course.title}</h2>
+            <p className="course-desc">{course.description}</p>
 
-              <p className="course-description">
-                {course.description || "No description provided."}
-              </p>
-
-              <div className="course-meta">
-                <span>
-                  👨‍🏫 {course.teacherName}
-                </span>
-                <span>
-                  📚 {course.credits} credits
-                </span>
-              </div>
+            <div className="teacher-info">
+              <strong>Teacher</strong>
+              <span>{course.teacherFirstName} {course.teacherLastName}</span>
+              <small>{course.teacherEmail}</small>
             </div>
-          ))}
-        </div>
-      )}
+          </section>
+        ))}
+
+        {courses.length === 0 && (
+          <section className="dashboard-card">
+            <p className="empty">No courses assigned</p>
+          </section>
+        )}
+      </div>
     </div>
   );
 }

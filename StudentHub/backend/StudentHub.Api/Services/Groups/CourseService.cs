@@ -29,8 +29,16 @@ namespace StudentHub.API.Services.Courses
         }
         public async Task<IEnumerable<Course>> GetByStudentIdAsync(string studentId)
         {
-            return await Task.FromResult(Enumerable.Empty<Course>());
+            return await _context.TeacherCourseGroups
+                .Where(tc =>
+                    tc.Group.Students.Any(s => s.Id == studentId)
+                )
+                .Include(tc => tc.Course)
+                .Select(tc => tc.Course)
+                .Distinct()
+                .ToListAsync();
         }
+
         public async Task<bool> TeacherHasAccessAsync(string teacherId, int courseId)
         {
             return await _context.Courses
