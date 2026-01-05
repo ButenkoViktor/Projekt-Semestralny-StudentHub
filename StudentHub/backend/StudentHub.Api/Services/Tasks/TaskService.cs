@@ -34,9 +34,8 @@ namespace StudentHub.Api.Services.Tasks
         {
             return await _context.Tasks
                 .Where(t =>
-                    _context.TeacherCourseGroups.Any(tc =>
-                        tc.TeacherId == teacherId &&
-                        tc.CourseId == t.CourseId))
+                    _context.TeacherGroups.Any(tc =>
+                        tc.TeacherId == teacherId))
                 .Include(t => t.Submissions)
                 .ToListAsync();
         }
@@ -62,7 +61,7 @@ namespace StudentHub.Api.Services.Tasks
             await _context.SaveChangesAsync();
             return task;
         }
-
+        
         public async Task DeleteAsync(int id)
         {
             var task = await _context.Tasks.FindAsync(id);

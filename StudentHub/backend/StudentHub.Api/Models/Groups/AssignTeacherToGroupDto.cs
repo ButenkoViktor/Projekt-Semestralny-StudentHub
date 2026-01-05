@@ -1,0 +1,1 @@
+﻿public record AssignTeacherToGroupDto(int GroupId, string TeacherId);

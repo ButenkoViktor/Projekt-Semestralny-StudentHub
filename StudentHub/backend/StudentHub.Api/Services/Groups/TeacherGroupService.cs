@@ -18,16 +18,14 @@ namespace StudentHub.Api.Services.Groups
 
         public async Task<IEnumerable<GroupForTeacherDto>> GetMyGroupsAsync(string teacherId)
         {
-            return await _context.TeacherCourseGroups
+                  return await _context.TeacherGroups
                 .Include(x => x.Group)
-                .Include(x => x.Course)
+             
                 .Where(x => x.TeacherId == teacherId)
                 .Select(x => new GroupForTeacherDto
                 {
-                    GroupId = x.GroupId,
-                    GroupName = x.Group.Name,
-                    CourseId = x.CourseId,         
-                    CourseTitle = x.Course.Title
+                GroupId = x.GroupId,
+                GroupName = x.Group.Name,
                 })
                 .ToListAsync();
         }
@@ -35,10 +33,10 @@ namespace StudentHub.Api.Services.Groups
         public async Task<IEnumerable<StudentGradeDto>> GetGroupStudentsAsync(
     string teacherId, int groupId, int courseId)
         {
-            var hasAccess = await _context.TeacherCourseGroups.AnyAsync(x =>
+            var hasAccess = await _context.TeacherGroups.AnyAsync(x =>
                 x.TeacherId == teacherId &&
-                x.GroupId == groupId &&
-                x.CourseId == courseId);
+                x.GroupId == groupId
+                );
 
             if (!hasAccess)
                 throw new UnauthorizedAccessException();
@@ -59,10 +57,10 @@ namespace StudentHub.Api.Services.Groups
 
         public async Task SaveGradeAsync(string teacherId, SaveGradeDto dto)
         {
-            var hasAccess = await _context.TeacherCourseGroups.AnyAsync(x =>
+            var hasAccess = await _context.TeacherGroups.AnyAsync(x =>
                 x.TeacherId == teacherId &&
-                x.GroupId == dto.GroupId &&
-                x.CourseId == dto.CourseId);
+                x.GroupId == dto.GroupId);
+
 
             if (!hasAccess)
                 throw new UnauthorizedAccessException();
@@ -96,10 +94,9 @@ namespace StudentHub.Api.Services.Groups
         }
         public async Task<IEnumerable<StudentFinalGradeDto>> GetFinalGradesAsync(string teacherId, int groupId, int courseId)
         {
-            var hasAccess = await _context.TeacherCourseGroups.AnyAsync(x =>
+            var hasAccess = await _context.TeacherGroups.AnyAsync(x =>
                 x.TeacherId == teacherId &&
-                x.GroupId == groupId &&
-                x.CourseId == courseId);
+                x.GroupId == groupId);
 
             if (!hasAccess)
                 throw new UnauthorizedAccessException();
@@ -127,10 +124,9 @@ namespace StudentHub.Api.Services.Groups
         }
         public async Task<IEnumerable<StudentGradeDto>> GetGradesHistoryAsync(string teacherId, int groupId, int courseId)
         {
-            var hasAccess = await _context.TeacherCourseGroups.AnyAsync(x =>
+            var hasAccess = await _context.TeacherGroups.AnyAsync(x =>
                 x.TeacherId == teacherId &&
-                x.GroupId == groupId &&
-                x.CourseId == courseId);
+                x.GroupId == groupId);
 
             if (!hasAccess)
                 throw new UnauthorizedAccessException();

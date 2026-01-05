@@ -350,25 +350,43 @@ namespace StudentHub.Infrastructure.Migrations
                 columns: table => new
                 {
                     GroupId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GroupStudents", x => new { x.GroupId, x.StudentId });
                     table.ForeignKey(
-                        name: "FK_GroupStudents_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_GroupStudents_AspNetUsers_StudentId",
                         column: x => x.StudentId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GroupStudents_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TeacherGroups",
+                columns: table => new
+                {
+                    GroupId = table.Column<int>(type: "int", nullable: false),
+                    TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeacherGroups", x => new { x.TeacherId, x.GroupId });
+                    table.ForeignKey(
+                        name: "FK_TeacherGroups_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TeacherGroups_Groups_GroupId",
                         column: x => x.GroupId,
                         principalTable: "Groups",
                         principalColumn: "Id",
@@ -455,7 +473,7 @@ namespace StudentHub.Infrastructure.Migrations
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentGrades_Groups_GroupId",
                         column: x => x.GroupId,
@@ -484,39 +502,6 @@ namespace StudentHub.Infrastructure.Migrations
                         name: "FK_Tasks_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TeacherCourseGroups",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false),
-                    GroupId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TeacherCourseGroups", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TeacherCourseGroups_AspNetUsers_TeacherId",
-                        column: x => x.TeacherId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TeacherCourseGroups_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TeacherCourseGroups_Groups_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -667,11 +652,6 @@ namespace StudentHub.Infrastructure.Migrations
                 column: "UploadedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupStudents_ApplicationUserId",
-                table: "GroupStudents",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GroupStudents_StudentId",
                 table: "GroupStudents",
                 column: "StudentId");
@@ -737,19 +717,9 @@ namespace StudentHub.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeacherCourseGroups_CourseId",
-                table: "TeacherCourseGroups",
-                column: "CourseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeacherCourseGroups_GroupId",
-                table: "TeacherCourseGroups",
+                name: "IX_TeacherGroups_GroupId",
+                table: "TeacherGroups",
                 column: "GroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeacherCourseGroups_TeacherId",
-                table: "TeacherCourseGroups",
-                column: "TeacherId");
         }
 
         /// <inheritdoc />
@@ -807,7 +777,7 @@ namespace StudentHub.Infrastructure.Migrations
                 name: "TaskSubmissionFiles");
 
             migrationBuilder.DropTable(
-                name: "TeacherCourseGroups");
+                name: "TeacherGroups");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

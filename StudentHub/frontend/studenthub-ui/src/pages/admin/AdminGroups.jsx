@@ -4,7 +4,7 @@ import {
   getGroups,
   createGroup,
   assignTeacherToGroup,
-  addStudentToGroup
+  addStudentToGroup,
 } from "../../api/groupsAdmin";
 import "./AdminGroups.css";
 
@@ -14,9 +14,9 @@ export default function AdminGroups() {
   const [students, setStudents] = useState([]);
 
   const [groupName, setGroupName] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState("");
-  const [selectedTeacher, setSelectedTeacher] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState("");
+  const [groupId, setGroupId] = useState("");
+  const [teacherId, setTeacherId] = useState("");
+  const [studentId, setStudentId] = useState("");
 
   const loadData = async () => {
     const groupsData = await getGroups();
@@ -35,6 +35,24 @@ export default function AdminGroups() {
     if (!groupName) return alert("Group name required");
     await createGroup(groupName);
     setGroupName("");
+    loadData();
+  };
+
+  const assignTeacher = async () => {
+    if (!groupId || !teacherId)
+      return alert("Select group and teacher");
+
+    await assignTeacherToGroup(Number(groupId), teacherId);
+    alert("Teacher assigned");
+    loadData();
+  };
+
+  const addStudent = async () => {
+    if (!groupId || !studentId)
+      return alert("Select group and student");
+
+    await addStudentToGroup(Number(groupId), studentId);
+    alert("Student added");
     loadData();
   };
 
@@ -57,14 +75,14 @@ export default function AdminGroups() {
       <div className="card">
         <h3>Assign teacher</h3>
 
-        <select onChange={e => setSelectedGroup(e.target.value)}>
+        <select value={groupId} onChange={e => setGroupId(e.target.value)}>
           <option value="">Select group</option>
           {groups.map(g => (
             <option key={g.id} value={g.id}>{g.name}</option>
           ))}
         </select>
 
-        <select onChange={e => setSelectedTeacher(e.target.value)}>
+        <select value={teacherId} onChange={e => setTeacherId(e.target.value)}>
           <option value="">Select teacher</option>
           {teachers.map(t => (
             <option key={t.id} value={t.id}>
@@ -73,27 +91,21 @@ export default function AdminGroups() {
           ))}
         </select>
 
-        <button
-          onClick={() =>
-            assignTeacherToGroup(selectedGroup, selectedTeacher)
-          }
-        >
-          Assign
-        </button>
+        <button onClick={assignTeacher}>Assign</button>
       </div>
 
       {/* ADD STUDENT */}
       <div className="card">
         <h3>Add student</h3>
 
-        <select onChange={e => setSelectedGroup(e.target.value)}>
+        <select value={groupId} onChange={e => setGroupId(e.target.value)}>
           <option value="">Select group</option>
           {groups.map(g => (
             <option key={g.id} value={g.id}>{g.name}</option>
           ))}
         </select>
 
-        <select onChange={e => setSelectedStudent(e.target.value)}>
+        <select value={studentId} onChange={e => setStudentId(e.target.value)}>
           <option value="">Select student</option>
           {students.map(s => (
             <option key={s.id} value={s.id}>
@@ -102,13 +114,7 @@ export default function AdminGroups() {
           ))}
         </select>
 
-        <button
-          onClick={() =>
-            addStudentToGroup(selectedGroup, selectedStudent)
-          }
-        >
-          Add
-        </button>
+        <button onClick={addStudent}>Add</button>
       </div>
     </div>
   );

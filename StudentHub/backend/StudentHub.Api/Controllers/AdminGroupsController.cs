@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentHub.Api.Models.Groups;
 using StudentHub.Api.Services.Groups;
-
+using System.Threading.Tasks;
 namespace StudentHub.Api.Controllers
 {
     [ApiController]
@@ -27,6 +27,12 @@ namespace StudentHub.Api.Controllers
             await _service.AssignStudentsAsync(dto);
             return Ok();
         }
-    }
 
+        [HttpPost("assign-teacher")]
+        public async Task<IActionResult> AssignTeacher(AssignTeacherToGroupDto dto)
+        {
+            await _service.AssignTeacherAsync(dto);
+            return Ok();
+        }
+    }
 }
