@@ -10,21 +10,30 @@ namespace StudentHub.Api.Services.Groups
         private readonly StudentHubDbContext _db;
         public GroupService(StudentHubDbContext db) => _db = db;
 
-        public async Task<IEnumerable<Group>> GetAllAsync() =>
-            await _db.Groups
-                .Include(g => g.GroupStudents)
-                    .ThenInclude(gs => gs.Student)
-                .Include(g => g.TeacherGroups)
-                    .ThenInclude(tg => tg.Teacher)
+        public async Task<IEnumerable<GroupAdminDto>> GetAllAsync()
+        {
+            return await _db.Groups
+                .Select(g => new GroupAdminDto
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    Students = g.GroupStudents.Select(gs => new UserShortDto
+                    {
+                        Id = gs.Student.Id,
+                        FirstName = gs.Student.FirstName,
+                        LastName = gs.Student.LastName,
+                        Email = gs.Student.Email!
+                    }).ToList(),
+                    Teachers = g.TeacherGroups.Select(tg => new UserShortDto
+                    {
+                        Id = tg.Teacher.Id,
+                        FirstName = tg.Teacher.FirstName,
+                        LastName = tg.Teacher.LastName,
+                        Email = tg.Teacher.Email!
+                    }).ToList()
+                })
                 .ToListAsync();
-
-        public async Task<Group?> GetByIdAsync(int id) =>
-            await _db.Groups
-                .Include(g => g.GroupStudents)
-                    .ThenInclude(gs => gs.Student)
-                .Include(g => g.TeacherGroups)
-                    .ThenInclude(tg => tg.Teacher)
-                .FirstOrDefaultAsync(g => g.Id == id);
+        }
 
         public async Task<Group> CreateAsync(CreateGroupDto dto)
         {
@@ -53,18 +62,17 @@ namespace StudentHub.Api.Services.Groups
 
         public async Task AssignTeacherAsync(AssignTeacherToGroupDto dto)
         {
-            var exists = await _db.Set<TeacherGroup>().AnyAsync(x =>
+            var exists = await _db.TeacherGroups.AnyAsync(x =>
                 x.GroupId == dto.GroupId &&
                 x.TeacherId == dto.TeacherId);
 
             if (!exists)
             {
-                _db.Set<TeacherGroup>().Add(new TeacherGroup
+                _db.TeacherGroups.Add(new TeacherGroup
                 {
                     GroupId = dto.GroupId,
                     TeacherId = dto.TeacherId
                 });
-
                 await _db.SaveChangesAsync();
             }
         }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StudentHub.Api.Hubs;
-
 using StudentHub.Api.Services.Announcements;
 using StudentHub.Api.Services.Chat;
 using StudentHub.Api.Services.Groups;
@@ -128,7 +127,14 @@ builder.Services.AddSignalR();
 
 //  MVC + SWAGGER
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    })
+    .AddApplicationPart(typeof(StudentHub.Api.Controllers.UserController).Assembly);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -175,9 +181,3 @@ static bool DatabaseExists(string conn)
         return false;
     }
 }
-
-
-
-builder.Services
-    .AddControllers()
-    .AddApplicationPart(typeof(StudentHub.Api.Controllers.UserController).Assembly);
