@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudentHub.Api.Models.Courses;
+using StudentHub.Api.Models.Groups;
 using StudentHub.Api.Services.Groups;
 using StudentHub.Core.Entities.Groups;
 using StudentHub.Infrastructure.Data;
@@ -14,8 +16,25 @@ namespace StudentHub.API.Services.Courses
             _context = context;
         }
 
-        public async Task<IEnumerable<Course>> GetAllAsync()
-            => await _context.Courses.ToListAsync();
+        public async Task<IEnumerable<CourseDto>> GetAllAsync()
+        {
+            return await _context.Courses
+                .Include(c => c.CourseGroups)
+                    .ThenInclude(cg => cg.Group)
+                .Select(c => new CourseDto
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    Description = c.Description,
+                    TeacherId = c.TeacherId,
+                    Groups = c.CourseGroups.Select(cg => new GroupShortDto
+                    {
+                        Id = cg.Group.Id,
+                        Name = cg.Group.Name
+                    }).ToList()
+                })
+                .ToListAsync();
+        }
 
         public async Task<Course?> GetByIdAsync(int id)
             => await _context.Courses
@@ -72,8 +91,10 @@ namespace StudentHub.API.Services.Courses
 
         public async Task AssignGroupAsync(int courseId, int groupId)
         {
-            if (!await _context.CourseGroups
-                .AnyAsync(x => x.CourseId == courseId && x.GroupId == groupId))
+            var exists = await _context.CourseGroups.AnyAsync(x =>
+                x.CourseId == courseId && x.GroupId == groupId);
+
+            if (!exists)
             {
                 _context.CourseGroups.Add(new CourseGroup
                 {
@@ -84,5 +105,6 @@ namespace StudentHub.API.Services.Courses
                 await _context.SaveChangesAsync();
             }
         }
+
     }
 }

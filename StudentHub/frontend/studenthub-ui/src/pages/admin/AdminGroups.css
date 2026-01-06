@@ -1,36 +1,71 @@
 .groups-page {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
+  padding: 32px;
+  background: transparent;
+  min-height: 100vh;
+  font-family: "Inter", system-ui, sans-serif;
+ 
 }
 
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+.groups-page h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1f2937;
 }
 
-.card h3 {
+.groups-page .card {
+  background: #ffffff;
+  border-radius: 14px;
+  margin-left: 35%;
+  padding: 20px;
+  margin-bottom: 24px;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.groups-page .card h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+.groups-page input{
+  width: 95%;
+  padding: 10px 12px;
   margin-bottom: 12px;
-}
-
-input, select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 8px 14px;
-  border: none;
   border-radius: 8px;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+
+}
+.groups-page select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
 }
 
-button:hover {
-  background: #1d4ed8;
+.groups-page input:focus,
+.groups-page select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+}
+
+.groups-page button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #6366f1;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.groups-page button:hover {
+  background: #4f46e5;
 }
