@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentHub.Api.Models.Schedule;
 using StudentHub.Api.Services.Schedule;
 using StudentHub.Core.Entities.Schedule;
+using StudentHub.Infrastructure.Data;
 
 namespace StudentHub.Api.Controllers
 {
@@ -11,10 +13,14 @@ namespace StudentHub.Api.Controllers
     public class ScheduleController : ControllerBase
     {
         private readonly IScheduleService _service;
+        private readonly StudentHubDbContext _context;
 
-        public ScheduleController(IScheduleService service)
+        public ScheduleController(
+            IScheduleService service,
+            StudentHubDbContext context)
         {
             _service = service;
+            _context = context;
         }
 
         [HttpGet]
@@ -56,15 +62,24 @@ namespace StudentHub.Api.Controllers
         [Authorize(Roles = "Admin,Teacher")]
         public async Task<ActionResult> Create(CreateScheduleDto dto)
         {
-            var created = await _service.CreateAsync(new ScheduleItem
+            var course = await _context.Courses
+                .Include(c => c.Teacher)
+                .FirstOrDefaultAsync(c => c.Id == dto.CourseId);
+
+            if (course == null)
+                return BadRequest("Course not found");
+
+            var item = new ScheduleItem
             {
                 CourseId = dto.CourseId,
-                TeacherName = dto.TeacherName,
+                TeacherName = $"{course.Teacher.FirstName} {course.Teacher.LastName}",
                 StartTime = dto.StartTime,
                 EndTime = dto.EndTime,
                 GroupId = dto.GroupId,
                 LessonType = dto.LessonType
-            });
+            };
+
+            var created = await _service.CreateAsync(item);
 
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
