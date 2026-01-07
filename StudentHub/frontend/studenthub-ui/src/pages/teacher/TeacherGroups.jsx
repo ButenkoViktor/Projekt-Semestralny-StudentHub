@@ -1,120 +1,222 @@
 import { useEffect, useState } from "react";
-import GroupStudentsTable from "./GroupStudentsTable";
-import GroupGradesHistoryPage from "./GroupGradesHistoryPage";
-import { getTeacherGroups } from "../../api/teacherService";
-import { getGroupStudents } from "../../api/teacherGroupService";
+import { teacherGroupService } from "../../api/teacherGroupService";
+import "./TeacherGroups.css";
 
-export default function TeacherGroupsPage() {
+export default function TeacherGroups() {
   const [groups, setGroups] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [students, setStudents] = useState([]);
-  const [activeTab, setActiveTab] = useState("lesson");
-  const [lessonDate, setLessonDate] = useState(
-    new Date().toISOString().slice(0, 10)
+  const [history, setHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
   );
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadGroups();
   }, []);
 
-  async function loadGroups() {
-    try {
-      const data = await getTeacherGroups();
-      setGroups(data);
-    } catch (e) {
-      console.error("Failed to load groups", e);
-    }
-  }
+  const loadGroups = async () => {
+    const data = await teacherGroupService.getMyGroups();
+    setGroups(data);
+  };
 
-  async function openGroup(group) {
-    setSelected(group);
-    setActiveTab("lesson");
-    setLoading(true);
+  const openGroup = async (group) => {
+    setSelectedGroup(group);
+    setShowHistory(false);
 
-    try {
-      const data = await getGroupStudents(
-        group.groupId,
-        group.courseId,
-        lessonDate
-      );
-      setStudents(data);
-    } catch (e) {
-      console.error("Failed to load students", e);
-    } finally {
-      setLoading(false);
-    }
-  }
+    const data = await teacherGroupService.getGroupStudents(
+      group.groupId,
+      group.courseId
+    );
+
+    setStudents(
+      data.map(s => ({
+        ...s,
+        isPresent: false,
+        grade: ""
+      }))
+    );
+  };
+
+  const updateStudent = (index, field, value) => {
+    const updated = [...students];
+    updated[index] = { ...updated[index], [field]: value };
+    setStudents(updated);
+  };
+
+  const saveStudent = async (student) => {
+    await teacherGroupService.saveGrade({
+      studentId: student.studentId,
+      groupId: selectedGroup.groupId,
+      courseId: selectedGroup.courseId,
+      date: selectedDate,
+      grade: student.grade ? Number(student.grade) : null,
+      isPresent: student.isPresent
+    });
+
+    alert("Saved");
+  };
+
+  const loadHistory = async () => {
+    const data = await teacherGroupService.getGradesHistory(
+      selectedGroup.groupId,
+      selectedGroup.courseId
+    );
+    setHistory(data);
+    setShowHistory(true);
+  };
+
+  const clearAllHistory = async () => {
+    if (!window.confirm("Delete ALL grades forever?")) return;
+
+    await teacherGroupService.clearAllGrades(
+      selectedGroup.groupId,
+      selectedGroup.courseId
+    );
+
+    setHistory([]);
+    alert("All grades deleted");
+  };
+
+  const clearHistoryByDate = async () => {
+    if (!window.confirm("Delete grades for selected date?")) return;
+
+    await teacherGroupService.clearGradesByDate(
+      selectedGroup.groupId,
+      selectedGroup.courseId,
+      selectedDate
+    );
+
+    setHistory(history.filter(
+      h => h.date.split("T")[0] !== selectedDate
+    ));
+
+    alert("Grades deleted for selected date");
+  };
 
   return (
-    <div className="teacher-page">
+    <div className="teacher-groups">
       <section className="welcome-card">
-        <h1>My Groups</h1>
-        <p>Courses assigned to you by administrator</p>
+        <h1>My Teaching Groups</h1>
+        <p>
+          Manage attendance and grades. All changes are saved permanently.
+        </p>
       </section>
 
-      <div className="group-list">
+      <div className="groups-list">
         {groups.map(g => (
-          <button
+          <div
             key={`${g.groupId}-${g.courseId}`}
-            className={selected?.groupId === g.groupId ? "active" : ""}
+            className={`group-card ${
+              selectedGroup?.groupId === g.groupId ? "active" : ""
+            }`}
             onClick={() => openGroup(g)}
           >
-            <strong>{g.groupName}</strong>
+            <h3>{g.groupName}</h3>
             <span>{g.courseTitle}</span>
-          </button>
+          </div>
         ))}
       </div>
 
-      {selected && (
-        <section className="group-section">
-          <div className="group-header">
+      {selectedGroup && (
+        <div className="students-section">
+          <div className="students-header">
             <h2>
-              {selected.groupName} — {selected.courseTitle}
+              {selectedGroup.groupName} — {selectedGroup.courseTitle}
             </h2>
 
-            <input
-              type="date"
-              value={lessonDate}
-              onChange={e => setLessonDate(e.target.value)}
-            />
+            <div className="actions">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={e => setSelectedDate(e.target.value)}
+              />
+
+              <button className="secondary" onClick={loadHistory}>
+                History
+              </button>
+
+              <button className="danger" onClick={clearHistoryByDate}>
+                Clear by Date
+              </button>
+
+              <button className="danger" onClick={clearAllHistory}>
+                Clear All
+              </button>
+            </div>
           </div>
 
-          <div className="group-tabs">
-            <button
-              className={activeTab === "lesson" ? "active" : ""}
-              onClick={() => setActiveTab("lesson")}
-            >
-              Lesson
-            </button>
-
-            <button
-              className={activeTab === "history" ? "active" : ""}
-              onClick={() => setActiveTab("history")}
-            >
-              Grades history
-            </button>
-          </div>
-
-          {loading && <p>Loading...</p>}
-
-          {!loading && activeTab === "lesson" && (
-            <GroupStudentsTable
-              students={students}
-              setStudents={setStudents}
-              groupId={selected.groupId}
-              courseId={selected.courseId}
-              lessonDate={lessonDate}
-            />
+          {!showHistory && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Present</th>
+                  <th>Grade</th>
+                  <th>Save</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((s, i) => (
+                  <tr key={s.studentId}>
+                    <td>{s.studentName}</td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={s.isPresent}
+                        onChange={e =>
+                          updateStudent(i, "isPresent", e.target.checked)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        max="5"
+                        disabled={!s.isPresent}
+                        value={s.grade}
+                        onChange={e =>
+                          updateStudent(i, "grade", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <button onClick={() => saveStudent(s)}>
+                        Save
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
 
-          {!loading && activeTab === "history" && (
-            <GroupGradesHistoryPage
-              groupId={selected.groupId}
-              courseId={selected.courseId}
-            />
+          {showHistory && (
+            <table className="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Student</th>
+                  <th>Present</th>
+                  <th>Grade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((h, i) => (
+                  <tr key={i}>
+                    <td>{h.date.split("T")[0]}</td>
+                    <td>{h.studentName}</td>
+                    <td>{h.isPresent ? "✔" : "✖"}</td>
+                    <td>{h.grade ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
-        </section>
+        </div>
       )}
     </div>
   );

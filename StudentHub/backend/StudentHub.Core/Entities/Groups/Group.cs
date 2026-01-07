@@ -7,4 +7,5 @@ public class Group
 
     public ICollection<GroupStudent> GroupStudents { get; set; } = new List<GroupStudent>();
     public ICollection<TeacherGroup> TeacherGroups { get; set; } = new List<TeacherGroup>();
+    public ICollection<CourseGroup> CourseGroups { get; set; } = new List<CourseGroup>();
 }

@@ -1,215 +1,243 @@
-
-body {
-  background: #f8fafc;
+.teacher-groups {
+  padding: 40px 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  font-family: "Inter", system-ui, sans-serif;
+  animation: fadeIn 0.5s ease-in-out;
+  color: #0f172a;
 }
 
 .welcome-card {
   background: linear-gradient(135deg, #2563eb, #1e40af);
-  border-radius: 24px;
-  padding: 36px 42px;
-  margin-bottom: 32px;
-  color: white;
-  box-shadow: 0 20px 45px rgba(37, 99, 235, 0.35);
-  position: relative;
-  overflow: hidden;
-}
-
-
-.welcome-card::after {
-  content: "";
-  position: absolute;
-  right: -120px;
-  top: -80px;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
+  color: #ffffff;
+  border-radius: 22px;
+  padding: 32px 36px;
+  margin-bottom: 36px;
+  box-shadow: 0 25px 60px rgba(37, 99, 235, 0.35);
 }
 
 .welcome-card h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
 }
 
 .welcome-card p {
-  font-size: 16px;
-  color: #e0e7ff;
+  font-size: 15px;
+  opacity: 0.9;
 }
 
-.teacher-page {
-  padding: 32px;
-  background: #f4f7fb;
-  min-height: 100vh;
-  animation: fadeIn 0.4s ease;
+.groups-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+  margin-bottom: 48px;
 }
 
-.group-list {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-}
-
-.group-list button {
-  padding: 14px 20px;
-  border-radius: 16px;
-  border: none;
-  background: white;
+.group-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 22px 24px;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 160px;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
-  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
-.group-list button strong {
-  font-size: 14px;
-  font-weight: 600;
+.group-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.group-card * {
+  position: relative;
+  z-index: 1;
+}
+
+.group-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
   color: #0f172a;
 }
 
-.group-list button span {
-  font-size: 12px;
+.group-card span {
+  font-size: 14px;
   color: #64748b;
 }
 
-.group-list button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+.group-card:hover,
+.group-card.active {
+  transform: translateY(-8px) scale(1.03);
 }
 
-.group-list button.active {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
+.group-card:hover::before,
+.group-card.active::before {
+  opacity: 1;
 }
 
-.group-list button.active strong,
-.group-list button.active span {
-  color: white;
+.group-card:hover h3,
+.group-card:hover span,
+.group-card.active h3,
+.group-card.active span {
+  color: #ffffff;
 }
 
-.group-section {
-  background: white;
-  border-radius: 22px;
-  padding: 26px;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  animation: slideUp 0.35s ease;
+.students-section {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.4s ease;
 }
 
-.group-header {
+.students-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
-.group-header h2 {
+.students-header h2 {
   font-size: 22px;
-  font-weight: 600;
-  color: #0f172a;
+  font-weight: 800;
+  color: #1e3a8a;
 }
 
-.group-header input {
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actions input[type="date"] {
   padding: 10px 14px;
   border-radius: 12px;
   border: 1px solid #c7d2fe;
   font-size: 14px;
-  background: #f8fafc;
+  transition: all 0.25s ease;
 }
 
-.students-table {
+.actions input[type="date"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:not(.secondary):not(.danger) {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+}
+
+button:not(.secondary):not(.danger):hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.55);
+}
+
+button.secondary {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+button.secondary:hover {
+  background: #dbeafe;
+  transform: translateY(-2px);
+}
+
+button.danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.45);
+}
+
+button.danger:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 36px rgba(239, 68, 68, 0.55);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 16px;
-  border-radius: 16px;
-  overflow: hidden;
 }
 
-.students-table th {
-  background: #f1f5f9;
+thead th {
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-size: 14px;
+  font-weight: 800;
   padding: 14px;
-  font-size: 13px;
-  text-align: left;
-  color: #334155;
 }
 
-.students-table td {
+tbody td {
   padding: 14px;
   border-bottom: 1px solid #e5e7eb;
   font-size: 14px;
-  color: #0f172a;
 }
 
-.students-table tr:hover td {
-  background: #f8fafc;
+input[type="number"] {
+  width: 70px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #c7d2fe;
 }
 
-.students-table input,
-.students-table select {
+input[type="number"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+input[type="checkbox"] {
+  transform: scale(1.25);
   cursor: pointer;
 }
 
-.save-btn {
-  margin-top: 24px;
-  padding: 14px 26px;
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  color: white;
-  border: none;
-  border-radius: 16px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
+.history-table td,
+.history-table th {
+  text-align: center;
 }
 
-.save-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(37, 99, 235, 0.4);
+.loader {
+  text-align: center;
+  padding: 80px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2563eb;
+  animation: pulse 1.4s infinite;
 }
 
-.group-tabs {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 20px;
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
 }
 
-.group-tabs button {
-  padding: 12px 26px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-
-  font-size: 14px;
-  font-weight: 500;
-
-  color: #1e293b;
-  background: #f1f5f9;
-
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-}
-
-.group-tabs button:hover {
-  transform: translateY(-2px);
-  background: #e0e7ff;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18);
-}
-
-.group-tabs button.active {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: white;
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
-}
-
-.group-tabs {
-  animation: fadeUp 0.35s ease;
-}
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -217,11 +245,21 @@ body {
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+@keyframes pulse {
+  0% { opacity: 0.4 }
+  50% { opacity: 1 }
+  100% { opacity: 0.4 }
+}
+
+
+@media (max-width: 768px) {
+  .students-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  to {
-    opacity: 1;
+
+  .actions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }

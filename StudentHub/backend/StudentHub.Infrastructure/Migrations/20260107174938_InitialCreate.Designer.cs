@@ -12,7 +12,7 @@ using StudentHub.Infrastructure.Data;
 namespace StudentHub.Infrastructure.Migrations
 {
     [DbContext(typeof(StudentHubDbContext))]
-    [Migration("20260105205136_InitialCreate")]
+    [Migration("20260107174938_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -883,7 +883,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Group", "Group")
-                        .WithMany()
+                        .WithMany("CourseGroups")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1011,6 +1011,8 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("Group", b =>
                 {
+                    b.Navigation("CourseGroups");
+
                     b.Navigation("GroupStudents");
 
                     b.Navigation("TeacherGroups");

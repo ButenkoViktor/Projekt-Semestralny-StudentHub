@@ -1,12 +1,7 @@
 import { saveGrade } from "../../api/teacherGroupService";
 
-export default function GroupStudentsTable({
-  students,
-  setStudents,
-  groupId,
-  courseId,
-  lessonDate
-}) {
+export default function GroupStudentsTable({students, setStudents, groupId, courseId, date}) 
+{
   const update = (id, patch) => {
     setStudents(prev =>
       prev.map(s =>
@@ -21,17 +16,17 @@ export default function GroupStudentsTable({
         studentId: s.studentId,
         groupId,
         courseId,
-        date: lessonDate,
-        isPresent: s.isPresent,
-        grade: s.grade
+        date,
+        grade: s.grade,
+        isPresent: s.isPresent
       });
     }
-    alert("Saved successfully");
+    alert("Saved successfully ✅");
   };
 
   return (
     <>
-      <table className="students-table">
+      <table className="table">
         <thead>
           <tr>
             <th>Student</th>
@@ -48,7 +43,9 @@ export default function GroupStudentsTable({
                   type="checkbox"
                   checked={s.isPresent}
                   onChange={e =>
-                    update(s.studentId, { isPresent: e.target.checked })
+                    update(s.studentId, {
+                      isPresent: e.target.checked
+                    })
                   }
                 />
               </td>
@@ -57,8 +54,8 @@ export default function GroupStudentsTable({
                   type="number"
                   min="1"
                   max="5"
-                  value={s.grade ?? ""}
                   disabled={!s.isPresent}
+                  value={s.grade ?? ""}
                   onChange={e =>
                     update(s.studentId, {
                       grade: e.target.value
@@ -74,7 +71,7 @@ export default function GroupStudentsTable({
       </table>
 
       <button className="save-btn" onClick={saveAll}>
-        Save all
+        Save lesson
       </button>
     </>
   );

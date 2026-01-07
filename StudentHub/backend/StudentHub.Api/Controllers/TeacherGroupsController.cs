@@ -4,60 +4,60 @@ using StudentHub.Api.Models.Grades;
 using StudentHub.Api.Services.Groups;
 using System.Security.Claims;
 
-namespace StudentHub.Api.Controllers
+[ApiController]
+[Route("api/teacher/groups")]
+[Authorize(Roles = "Teacher")]
+public class TeacherGroupsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/teacher/groups")]
-    [Authorize(Roles = "Teacher")]
-    public class TeacherGroupsController : ControllerBase
+    private readonly ITeacherGroupService _service;
+
+    public TeacherGroupsController(ITeacherGroupService service)
     {
-        private readonly ITeacherGroupService _service;
+        _service = service;
+    }
 
-        public TeacherGroupsController(ITeacherGroupService service)
-        {
-            _service = service;
-        }
+    private string UserId =>
+        User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-        [HttpGet]
-        public async Task<IActionResult> MyGroups()
-        {
-            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok(await _service.GetMyGroupsAsync(teacherId));
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetMyGroups()
+    {
+        return Ok(await _service.GetMyGroupsAsync(UserId));
+    }
 
-        [HttpGet("{groupId}/course/{courseId}")]
-        public async Task<IActionResult> GroupStudents(int groupId, int courseId)
-        {
-            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok(await _service.GetGroupStudentsAsync(teacherId, groupId, courseId));
-        }
+    [HttpGet("{groupId}/students")]
+    public async Task<IActionResult> GetStudents(int groupId, [FromQuery] int courseId)
+    {
+        return Ok(await _service.GetGroupStudentsAsync(UserId, groupId, courseId));
+    }
 
-        [HttpPost("grade")]
-        public async Task<IActionResult> SaveGrade(SaveGradeDto dto)
-        {
-            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _service.SaveGradeAsync(teacherId, dto);
-            return Ok();
-        }
+    [HttpPost("grade")]
+    public async Task<IActionResult> SaveGrade([FromBody] SaveGradeDto dto)
+    {
+        await _service.SaveGradeAsync(UserId, dto);
+        return Ok();
+    }
 
-        [HttpGet("{groupId}/courses/{courseId}/final-grades")]
-        public async Task<IActionResult> GetFinalGrades(int groupId, int courseId)
-        {
-            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    [HttpGet("{groupId}/courses/{courseId}/grades-history")]
+    public async Task<IActionResult> GradesHistory(int groupId, int courseId)
+    {
+        return Ok(await _service.GetGradesHistoryAsync(UserId, groupId, courseId));
+    }
 
-            var result = await _service.GetFinalGradesAsync(
-                teacherId!, groupId, courseId);
+    [HttpDelete("{groupId}/courses/{courseId}/grades")]
+    public async Task<IActionResult> ClearAllGrades(int groupId, int courseId)
+    {
+        await _service.ClearGradesAsync(UserId, groupId, courseId);
+        return Ok();
+    }
 
-            return Ok(result);
-        }
-
-        [HttpGet("{groupId}/courses/{courseId}/grades-history")]
-        public async Task<IActionResult> GetGradesHistory( int groupId, int courseId)
-        {
-            var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _service.GetGradesHistoryAsync(
-                teacherId!, groupId, courseId);
-            return Ok(result);
-        }
+    [HttpDelete("{groupId}/courses/{courseId}/grades/by-date")]
+    public async Task<IActionResult> ClearGradesByDate(
+        int groupId,
+        int courseId,
+        [FromQuery] DateTime date)
+    {
+        await _service.ClearGradesByDateAsync(UserId, groupId, courseId, date);
+        return Ok();
     }
 }

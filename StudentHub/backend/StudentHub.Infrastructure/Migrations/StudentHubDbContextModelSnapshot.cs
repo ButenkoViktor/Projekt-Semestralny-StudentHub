@@ -880,7 +880,7 @@ namespace StudentHub.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Group", "Group")
-                        .WithMany()
+                        .WithMany("CourseGroups")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1008,6 +1008,8 @@ namespace StudentHub.Infrastructure.Migrations
 
             modelBuilder.Entity("Group", b =>
                 {
+                    b.Navigation("CourseGroups");
+
                     b.Navigation("GroupStudents");
 
                     b.Navigation("TeacherGroups");
