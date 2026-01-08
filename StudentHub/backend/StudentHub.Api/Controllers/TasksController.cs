@@ -73,6 +73,25 @@ public class TasksController : ControllerBase
         return Ok(await _taskService.SubmitAsync(submission));
     }
 
+    [Authorize(Roles = "Student")]
+    [HttpPut("{id:int}/submit")]
+    public async Task<IActionResult> UpdateSubmission(int id, SubmitTaskDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        try
+        {
+            var updated = await _taskService.UpdateSubmissionAsync(id, userId, dto);
+            return Ok(updated);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+
     [Authorize(Roles = "Teacher")]
     [HttpGet("{id:int}/submissions")]
     public async Task<IActionResult> GetSubmissions(int id)

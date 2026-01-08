@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudentHub.Api.Models.Tasks;
 using StudentHub.Core.Entities.Tasks;
 using StudentHub.Infrastructure.Data;
 
@@ -70,6 +71,34 @@ namespace StudentHub.Api.Services.Tasks
                     : TaskSubmissionStatus.Submitted;
 
             _context.TaskSubmissions.Add(submission);
+            await _context.SaveChangesAsync();
+            return submission;
+        }
+
+        public async Task<TaskSubmission> UpdateSubmissionAsync(
+    int taskId,
+    string userId,
+    SubmitTaskDto dto)
+        {
+            var submission = await _context.TaskSubmissions
+                .Include(s => s.Task)
+                .FirstOrDefaultAsync(s =>
+                    s.TaskId == taskId &&
+                    s.UserId == userId);
+
+            if (submission == null)
+                throw new Exception("Submission not found");
+
+            if (DateTime.UtcNow > submission.Task.Deadline)
+                throw new Exception("Deadline passed");
+
+            submission.AnswerText = dto.AnswerText;
+            submission.SubmittedAt = DateTime.UtcNow;
+            submission.Status =
+                submission.SubmittedAt > submission.Task.Deadline
+                    ? TaskSubmissionStatus.Late
+                    : TaskSubmissionStatus.Submitted;
+
             await _context.SaveChangesAsync();
             return submission;
         }

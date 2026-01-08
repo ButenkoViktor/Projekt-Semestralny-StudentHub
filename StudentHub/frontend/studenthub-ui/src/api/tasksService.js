@@ -28,3 +28,10 @@ export const submitTask = async (taskId, data) => {
   const res = await axios.post(`/tasks/${taskId}/submit`, data);
   return res.data;
 };
+
+export const updateSubmission = async (taskId, data) => {
+  const res = await axios.put(`/tasks/${taskId}/submit`, data);
+  return res.data;
+};
+
+

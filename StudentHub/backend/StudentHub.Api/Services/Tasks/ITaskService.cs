@@ -1,4 +1,5 @@
-﻿using StudentHub.Core.Entities.Tasks;
+﻿using StudentHub.Api.Models.Tasks;
+using StudentHub.Core.Entities.Tasks;
 
 public interface ITaskService
 {
@@ -11,6 +12,12 @@ public interface ITaskService
     Task DeleteAsync(int id);
 
     Task<TaskSubmission> SubmitAsync(TaskSubmission submission);
+
+    Task<TaskSubmission> UpdateSubmissionAsync(
+    int taskId,
+    string userId,
+    SubmitTaskDto dto
+    );
 
     Task<IEnumerable<TaskSubmission>> GetSubmissionsForTaskAsync(int taskId);
 }
