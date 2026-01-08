@@ -8,29 +8,55 @@ export default function StudentTasks() {
   const [answers, setAnswers] = useState({});
 
   useEffect(() => {
-    getStudentTasks()
-      .then(setTasks)
-      .finally(() => setLoading(false));
+    loadTasks();
   }, []);
 
+  const loadTasks = async () => {
+    try {
+      const data = await getStudentTasks();
+      setTasks(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (taskId) => {
-    if (!answers[taskId]) return alert("Enter your answer");
+    if (!answers[taskId]) {
+      alert("Enter your answer");
+      return;
+    }
 
     await submitTask(taskId, {
       answerText: answers[taskId]
     });
 
-    // перезавантажуємо задачі щоб оновився статус
-    const updated = await getStudentTasks();
-    setTasks(updated);
     setAnswers(prev => ({ ...prev, [taskId]: "" }));
+    loadTasks();
   };
 
   const getStatus = (task) => {
-    if (!task.submissions || task.submissions.length === 0)
-      return "pending";
+    const submission = task.submissions?.[0];
 
-    return task.submissions[0].status.toLowerCase();
+    if (!submission) {
+      return { text: "Pending", className: "pending" };
+    }
+
+    switch (submission.status) {
+      case 0:
+      case "Pending":
+        return { text: "Pending", className: "pending" };
+
+      case 1:
+      case "Submitted":
+        return { text: "Submitted", className: "submitted" };
+
+      case 2:
+      case "Graded":
+        return { text: "Graded", className: "graded" };
+
+      default:
+        return { text: "Unknown", className: "pending" };
+    }
   };
 
   const getCountdown = (deadline) => {
@@ -64,19 +90,22 @@ export default function StudentTasks() {
               <p className="task-desc">{task.description}</p>
 
               <div className="task-meta">
-                <span className={`task-status ${status}`}>
-                  {status}
+                <span className={`task-status ${status.className}`}>
+                  {status.text}
                 </span>
                 <small>{getCountdown(task.deadline)}</small>
               </div>
 
-              {status === "pending" && (
+              {status.className === "pending" && (
                 <div className="task-submit">
                   <textarea
                     placeholder="Your answer..."
                     value={answers[task.id] || ""}
                     onChange={(e) =>
-                      setAnswers({ ...answers, [task.id]: e.target.value })
+                      setAnswers(prev => ({
+                        ...prev,
+                        [task.id]: e.target.value
+                      }))
                     }
                   />
                   <button onClick={() => handleSubmit(task.id)}>

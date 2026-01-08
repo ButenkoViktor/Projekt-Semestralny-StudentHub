@@ -1,5 +1,7 @@
 import axios from "./axios";
 
+/* ---------- TEACHER ---------- */
+
 export const getTeacherTasks = async () => {
   const res = await axios.get("/tasks/teacher");
   return res.data;
@@ -24,7 +26,8 @@ export const getTaskSubmissions = async (taskId) => {
   return res.data;
 };
 
-/* ✅ ВАЖЛИВО */
+/* ---------- STUDENT ---------- */
+
 export const getStudentTasks = async () => {
   const res = await axios.get("/tasks/student");
   return res.data;
