@@ -1,0 +1,65 @@
+.task-desc {
+  margin: 8px 0 16px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.task-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.task-status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.task-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.task-status.submitted {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.task-status.late {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.task-submit {
+  margin-top: 12px;
+}
+
+.task-submit textarea {
+  width: 100%;
+  min-height: 70px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.task-submit button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.task-submit button:hover {
+  background: #1d4ed8;
+}

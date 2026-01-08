@@ -23,3 +23,14 @@ export const getTaskSubmissions = async (taskId) => {
   const res = await axios.get(`/tasks/${taskId}/submissions`);
   return res.data;
 };
+
+/* ✅ ВАЖЛИВО */
+export const getStudentTasks = async () => {
+  const res = await axios.get("/tasks/student");
+  return res.data;
+};
+
+export const submitTask = async (taskId, data) => {
+  const res = await axios.post(`/tasks/${taskId}/submit`, data);
+  return res.data;
+};
