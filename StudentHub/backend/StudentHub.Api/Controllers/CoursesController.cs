@@ -45,7 +45,7 @@ namespace StudentHub.API.Controllers
                 return Ok(await _service.GetByTeacherIdAsync(userId));
 
             if (User.IsInRole("Student"))
-                return Ok(await _service.GetByStudentIdAsync(userId));
+                return Ok(await _service.GetByStudentIdWithTeacherAsync(userId));
 
             return Forbid();
         }

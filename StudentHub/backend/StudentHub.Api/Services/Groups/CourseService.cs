@@ -106,5 +106,26 @@ namespace StudentHub.API.Services.Courses
             }
         }
 
+        public async Task<IEnumerable<CourseWithTeacherDto>> GetByStudentIdWithTeacherAsync(string studentId)
+        {
+            return await _context.CourseGroups
+                .Where(cg =>
+                    cg.Group.GroupStudents.Any(gs => gs.StudentId == studentId))
+                .Select(cg => cg.Course)
+                .Distinct()
+                .Include(c => c.Teacher)
+                .Select(c => new CourseWithTeacherDto
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    Description = c.Description,
+                    TeacherFirstName = c.Teacher.FirstName,
+                    TeacherLastName = c.Teacher.LastName,
+                    TeacherEmail = c.Teacher.Email
+                })
+                .ToListAsync();
+        }
+
+
     }
 }

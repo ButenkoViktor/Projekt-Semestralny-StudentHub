@@ -13,4 +13,6 @@ public interface ICourseService
     Task<bool> DeleteAsync(int id);
     Task<Course> CreateAsync(Course course);
     Task<bool> TeacherHasAccessAsync(string teacherId, int courseId);
+    Task<IEnumerable<CourseWithTeacherDto>> GetByStudentIdWithTeacherAsync(string studentId);
+
 }
