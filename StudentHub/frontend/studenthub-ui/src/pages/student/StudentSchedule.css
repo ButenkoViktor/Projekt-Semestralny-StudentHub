@@ -1,8 +1,8 @@
 .schedule-page {
   padding: 24px;
+  background: #fff;
 }
 
-/* BLUE HEADER */
 .page-header {
   background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;
@@ -22,7 +22,6 @@
   opacity: 0.9;
 }
 
-/* CARD */
 .card {
   background: #fff;
   border-radius: 16px;
