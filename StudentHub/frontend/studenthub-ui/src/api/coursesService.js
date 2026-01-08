@@ -18,3 +18,4 @@ export const getMyCourses = async () => {
   const res = await api.get("/courses/my");
   return res.data;
 };
+

@@ -70,9 +70,15 @@ namespace StudentHub.Api.Services.Tasks
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
         }
-
         public async Task<TaskSubmission> SubmitAsync(TaskSubmission submission)
         {
+            var alreadySubmitted = await _context.TaskSubmissions.AnyAsync(s =>
+                s.TaskId == submission.TaskId &&
+                s.UserId == submission.UserId);
+
+            if (alreadySubmitted)
+                throw new InvalidOperationException("Task already submitted");
+
             submission.Status =
                 submission.SubmittedAt > submission.Task.Deadline
                     ? TaskSubmissionStatus.Late
@@ -80,6 +86,7 @@ namespace StudentHub.Api.Services.Tasks
 
             _context.TaskSubmissions.Add(submission);
             await _context.SaveChangesAsync();
+
             return submission;
         }
 

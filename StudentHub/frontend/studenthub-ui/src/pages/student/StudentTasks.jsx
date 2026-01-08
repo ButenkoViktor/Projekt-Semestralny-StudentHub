@@ -6,18 +6,17 @@ export default function StudentTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadTasks();
   }, []);
 
   const loadTasks = async () => {
-    try {
-      const data = await getStudentTasks();
-      setTasks(data);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    const data = await getStudentTasks();
+    setTasks(data);
+    setLoading(false);
   };
 
   const handleSubmit = async (taskId) => {
@@ -26,37 +25,32 @@ export default function StudentTasks() {
       return;
     }
 
-    await submitTask(taskId, {
-      answerText: answers[taskId]
-    });
+    try {
+      await submitTask(taskId, {
+        answerText: answers[taskId]
+      });
 
-    setAnswers(prev => ({ ...prev, [taskId]: "" }));
-    loadTasks();
+      setAnswers(prev => ({ ...prev, [taskId]: "" }));
+      loadTasks();
+    } catch (err) {
+      alert(err.response?.data || "Submit failed");
+    }
   };
 
+  const getSubmission = (task) => task.submissions?.[0];
+
   const getStatus = (task) => {
-    const submission = task.submissions?.[0];
+    const sub = getSubmission(task);
 
-    if (!submission) {
-      return { text: "Pending", className: "pending" };
-    }
+    if (!sub) return { text: "Pending", className: "pending" };
 
-    switch (submission.status) {
-      case 0:
-      case "Pending":
-        return { text: "Pending", className: "pending" };
+    if (sub.status === 0 || sub.status === "Submitted")
+      return { text: "Submitted", className: "submitted" };
 
-      case 1:
-      case "Submitted":
-        return { text: "Submitted", className: "submitted" };
+    if (sub.status === 1 || sub.status === "Late")
+      return { text: "Late", className: "pending" };
 
-      case 2:
-      case "Graded":
-        return { text: "Graded", className: "graded" };
-
-      default:
-        return { text: "Unknown", className: "pending" };
-    }
+    return { text: "Unknown", className: "pending" };
   };
 
   const getCountdown = (deadline) => {
@@ -83,6 +77,7 @@ export default function StudentTasks() {
       <div className="dashboard-grid">
         {tasks.map(task => {
           const status = getStatus(task);
+          const hasSubmitted = !!getSubmission(task);
 
           return (
             <section className="dashboard-card" key={task.id}>
@@ -96,7 +91,7 @@ export default function StudentTasks() {
                 <small>{getCountdown(task.deadline)}</small>
               </div>
 
-              {status.className === "pending" && (
+              {!hasSubmitted && (
                 <div className="task-submit">
                   <textarea
                     placeholder="Your answer..."
