@@ -1,142 +1,131 @@
 import { useEffect, useState } from "react";
-import { getSchedule, createSchedule, deleteSchedule } from "../../api/scheduleService";
+import { getMyCourses } from "../../api/coursesService";
+import {
+  getSchedules,
+  createSchedule,
+  deleteSchedule,
+} from "../../api/scheduleService";
+
 import "./TeacherSchedule.css";
 
-const TEACHER_NAME = "Viktor Butenko"; // Hardcoded for demo purposes
 export default function TeacherSchedule() {
-  const [items, setItems] = useState([]);
-  const [view, setView] = useState("week");
+  const [courses, setCourses] = useState([]);
+  const [schedules, setSchedules] = useState([]);
 
-  const [form, setForm] = useState({
-    courseId: "",
-    startTime: "",
-    endTime: "",
-    lessonType: "",
-    groupId: "",
-  });
+  const [courseId, setCourseId] = useState("");
+  const [title, setTitle] = useState("");
+  const [lessonType, setLessonType] = useState("");
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
 
   useEffect(() => {
-    load();
+    loadData();
   }, []);
 
-  async function load() {
-    const data = await getSchedule();
-    setItems(data.filter(i => i.teacherName === TEACHER_NAME));
-  }
+  const loadData = async () => {
+    const [coursesData, schedulesData] = await Promise.all([
+      getMyCourses(),
+      getSchedules(),
+    ]);
 
-  async function handleCreate(e) {
-    e.preventDefault();
+    setCourses(coursesData);
+    setSchedules(schedulesData);
+  };
 
-    await createSchedule({
-      courseId: Number(form.courseId),
-      teacherName: TEACHER_NAME,
-      startTime: form.startTime,
-      endTime: form.endTime,
-      lessonType: form.lessonType || null,
-      groupId: form.groupId ? Number(form.groupId) : null,
-    });
-
-    setForm({
-      courseId: "",
-      startTime: "",
-      endTime: "",
-      lessonType: "",
-      groupId: "",
-    });
-
-    load();
-  }
-
-  const filtered = items.filter(i => {
-    const d = new Date(i.startTime);
-    const now = new Date();
-
-    if (view === "day") {
-      return d.toDateString() === now.toDateString();
+  const handleCreate = async () => {
+    if (!courseId || !date || !startTime || !endTime) {
+      alert("Fill all required fields");
+      return;
     }
 
-    const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - now.getDay());
+    const start = new Date(`${date}T${startTime}`);
+    const end = new Date(`${date}T${endTime}`);
 
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 7);
+    await createSchedule({
+      courseId: Number(courseId),
+      startTime: start.toISOString(),
+      endTime: end.toISOString(),
+      lessonType,
+      groupId: null,
+      teacherName: "auto", 
+    });
 
-    return d >= weekStart && d <= weekEnd;
-  });
+    setTitle("");
+    setLessonType("");
+    setDate("");
+    setStartTime("");
+    setEndTime("");
+
+    loadData();
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete lesson?")) return;
+    await deleteSchedule(id);
+    loadData();
+  };
 
   return (
-    <div className="schedule-page">
-      <div className="schedule-header">
-        <h1>Teacher Schedule</h1>
-        <div className="view-switch">
-          <button onClick={() => setView("day")} className={view === "day" ? "active" : ""}>Day</button>
-          <button onClick={() => setView("week")} className={view === "week" ? "active" : ""}>Week</button>
+    
+    <div className="teacher-schedule">
+      <section className="welcome-card">
+        <h1>My Teaching Groups</h1>
+        <p>
+          Create and manage your teaching schedule. Add lessons and keep track of your classes.
+        </p>
+      </section>
+
+      <div className="schedule-form">
+        <select value={courseId} onChange={(e) => setCourseId(e.target.value)}>
+          <option value="">Select course</option>
+          {courses.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.title}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="text"
+          placeholder="Lesson title"
+          value={lessonType}
+          onChange={(e) => setLessonType(e.target.value)}
+        />
+
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+
+        <div className="time-row">
+          <input
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+          />
+          <input
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+          />
         </div>
+
+        <button onClick={handleCreate}>Create lesson</button>
       </div>
 
-      <form className="schedule-form" onSubmit={handleCreate}>
-        <h2>Add lesson</h2>
-
-        <input
-          placeholder="Course ID"
-          value={form.courseId}
-          onChange={e => setForm({ ...form, courseId: e.target.value })}
-          required
-        />
-
-        <input
-          type="datetime-local"
-          value={form.startTime}
-          onChange={e => setForm({ ...form, startTime: e.target.value })}
-          required
-        />
-
-        <input
-          type="datetime-local"
-          value={form.endTime}
-          onChange={e => setForm({ ...form, endTime: e.target.value })}
-          required
-        />
-
-        <input
-          placeholder="Lesson type (lecture, lab)"
-          value={form.lessonType}
-          onChange={e => setForm({ ...form, lessonType: e.target.value })}
-        />
-
-        <input
-          placeholder="Group ID (optional)"
-          value={form.groupId}
-          onChange={e => setForm({ ...form, groupId: e.target.value })}
-        />
-
-        <button>Create</button>
-      </form>
-
-      <div className="schedule-grid">
-        {filtered.map(item => (
-          <div key={item.id} className="schedule-card">
+      <div className="schedule-list">
+        {schedules.map((s) => (
+          <div className="schedule-card" key={s.id}>
             <div>
-              <h3>{item.course.title}</h3>
-              <p>{item.lessonType || "Lesson"}</p>
-              <small>
-                {new Date(item.startTime).toLocaleString()} –{" "}
-                {new Date(item.endTime).toLocaleTimeString()}
-              </small>
+              <strong>{s.courseTitle}</strong>
+              <p>{s.lessonType}</p>
+              <p>
+                {new Date(s.startTime).toLocaleString()} –{" "}
+                {new Date(s.endTime).toLocaleTimeString()}
+              </p>
             </div>
 
-            <button
-              className="delete"
-              onClick={() => deleteSchedule(item.id).then(load)}
-            >
-              Delete
-            </button>
+            <button className="buttonD" onClick={() => handleDelete(s.id)}>✖</button>
           </div>
         ))}
-
-        {filtered.length === 0 && (
-          <p className="empty">No lessons</p>
-        )}
       </div>
     </div>
   );

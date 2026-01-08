@@ -9,51 +9,22 @@ namespace StudentHub.Core.Entities.Tasks
 {
     public class TaskItem
     {
-        /// <summary>
-        /// Primary key of the task.
-        /// </summary>
         public int Id { get; set; }
 
-        /// <summary>
-        /// Gets or sets the title associated with the object.
-        /// </summary>
         public string Title { get; set; } = default!;
 
-        /// <summary>
-        /// Gets or sets the descriptive text associated with the object.
-        /// </summary>
         public string? Description { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the item is published and visible to users.
-        /// </summary>
         public bool IsPublished { get; set; } = true;
 
-        /// <summary>
-        /// Gets or sets the unique identifier for the course.
-        /// </summary>
         public int CourseId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the deadline for completing the task.
-        /// </summary>
         public DateTime Deadline { get; set; }
 
-        /// <summary>
-        /// Gets or sets the identifier of the group associated with the entity.
-        /// </summary>
         public int? GroupId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the collection of attachments associated with the task.
-        /// </summary>
-        /// <remarks>The collection may be null if no attachments have been added. Modifying the
-        /// collection does not automatically persist changes; ensure that updates are saved as appropriate in your
-        /// application workflow.</remarks>
         public ICollection<TaskAttachment>? Attachments { get; set; }
-        /// <summary>
-        /// Gets or sets the collection of task submissions associated with this entity.
-        /// </summary>
+
         public ICollection<TaskSubmission>? Submissions { get; set; }
     }
 }

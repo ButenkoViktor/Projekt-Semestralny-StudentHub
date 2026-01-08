@@ -1,15 +1,15 @@
-import axios from "./axios";
+import api from "./axios";
 
-export const getSchedule = async () => {
-  const res = await axios.get("/schedule");
+export const getSchedules = async () => {
+  const res = await api.get("/schedule");
   return res.data;
 };
 
 export const createSchedule = async (data) => {
-  const res = await axios.post("/schedule", data);
+  const res = await api.post("/schedule", data);
   return res.data;
 };
 
 export const deleteSchedule = async (id) => {
-  await axios.delete(`/schedule/${id}`);
+  await api.delete(`/schedule/${id}`);
 };
