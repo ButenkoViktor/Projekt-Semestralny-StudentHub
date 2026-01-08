@@ -15,15 +15,11 @@ namespace StudentHub.Api.Services.Tasks
 
         public async Task<TaskItem> CreateAsync(TaskItem task)
         {
-            // ✅ перевірка існування курсу
             var courseExists = await _context.Courses
                 .AnyAsync(c => c.Id == task.CourseId);
 
             if (!courseExists)
-            {
-                throw new ArgumentException(
-                    $"Course with id {task.CourseId} does not exist");
-            }
+                throw new ArgumentException("Course not found");
 
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
@@ -34,16 +30,19 @@ namespace StudentHub.Api.Services.Tasks
         {
             return await _context.Tasks
                 .Where(t =>
-                    _context.TeacherGroups.Any(tc =>
-                        tc.TeacherId == teacherId))
-                .Include(t => t.Submissions)
+                    _context.Courses.Any(c =>
+                        c.Id == t.CourseId &&
+                        c.TeacherId == teacherId))
+                .OrderBy(t => t.Deadline)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<TaskItem>> GetForStudentAsync(string studentId)
         {
             return await _context.Tasks
-                .Include(t => t.Submissions!.Where(s => s.UserId == studentId))
+                .Include(t => t.Submissions!
+                    .Where(s => s.UserId == studentId))
+                .OrderBy(t => t.Deadline)
                 .ToListAsync();
         }
 
@@ -51,17 +50,9 @@ namespace StudentHub.Api.Services.Tasks
         {
             return await _context.Tasks
                 .Include(t => t.Submissions)
-                .ThenInclude(s => s.Files)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<TaskItem> UpdateAsync(TaskItem task)
-        {
-            _context.Tasks.Update(task);
-            await _context.SaveChangesAsync();
-            return task;
-        }
-        
         public async Task DeleteAsync(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
@@ -70,15 +61,9 @@ namespace StudentHub.Api.Services.Tasks
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
         }
+
         public async Task<TaskSubmission> SubmitAsync(TaskSubmission submission)
         {
-            var alreadySubmitted = await _context.TaskSubmissions.AnyAsync(s =>
-                s.TaskId == submission.TaskId &&
-                s.UserId == submission.UserId);
-
-            if (alreadySubmitted)
-                throw new InvalidOperationException("Task already submitted");
-
             submission.Status =
                 submission.SubmittedAt > submission.Task.Deadline
                     ? TaskSubmissionStatus.Late
@@ -86,7 +71,6 @@ namespace StudentHub.Api.Services.Tasks
 
             _context.TaskSubmissions.Add(submission);
             await _context.SaveChangesAsync();
-
             return submission;
         }
 
@@ -95,7 +79,6 @@ namespace StudentHub.Api.Services.Tasks
             return await _context.TaskSubmissions
                 .Where(s => s.TaskId == taskId)
                 .Include(s => s.User)
-                .Include(s => s.Files)
                 .ToListAsync();
         }
     }

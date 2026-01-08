@@ -17,6 +17,24 @@ public class TasksController : ControllerBase
     }
 
     [Authorize(Roles = "Teacher")]
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateTaskDto dto)
+    {
+        var task = new TaskItem
+        {
+            Title = dto.Title,
+            Description = dto.Description,
+            Deadline = dto.Deadline,
+            CourseId = dto.CourseId,
+            GroupId = dto.GroupId,
+            IsPublished = true
+        };
+
+        var created = await _taskService.CreateAsync(task);
+        return Ok(created);
+    }
+
+    [Authorize(Roles = "Teacher")]
     [HttpGet("teacher")]
     public async Task<IActionResult> GetForTeacher()
     {
@@ -37,15 +55,11 @@ public class TasksController : ControllerBase
     public async Task<IActionResult> Submit(int id, SubmitTaskDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
         var task = await _taskService.GetByIdAsync(id);
         if (task == null) return NotFound();
 
-        // ❌ заборона повторної здачі
         if (task.Submissions?.Any(s => s.UserId == userId) == true)
-        {
             return BadRequest("Task already submitted");
-        }
 
         var submission = new TaskSubmission
         {
@@ -64,5 +78,13 @@ public class TasksController : ControllerBase
     public async Task<IActionResult> GetSubmissions(int id)
     {
         return Ok(await _taskService.GetSubmissionsForTaskAsync(id));
+    }
+
+    [Authorize(Roles = "Teacher")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _taskService.DeleteAsync(id);
+        return NoContent();
     }
 }

@@ -8,7 +8,6 @@ public interface ITaskService
     Task<TaskItem?> GetByIdAsync(int id);
 
     Task<TaskItem> CreateAsync(TaskItem task);
-    Task<TaskItem> UpdateAsync(TaskItem task);
     Task DeleteAsync(int id);
 
     Task<TaskSubmission> SubmitAsync(TaskSubmission submission);
